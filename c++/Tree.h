@@ -53,7 +53,17 @@ public:
     struct iterator;
     struct Constiterator;
     iterator find(const T& t);
-    bool trova(const T& t);
+    // implementazione della funzione trova
+    bool trova(const T& t){
+        Node* j{root};
+        while(j!=nullptr){
+            if(j->key == t){return true;}
+            else{
+                if(j->key > t) j=j->left;
+                else j=j->right;}
+        }
+        return false;}
+    
     iterator First(){return iterator{first};}
     iterator Last(){return iterator{last};}
     iterator Root(){return iterator{root};}
@@ -145,4 +155,26 @@ struct Tree<T,W>::iterator{
     
    
 };
+template<typename T , typename W>
+void Tree<T,W>::Insert(T k, W v){
+//inserimento primo elemento
+     if (size_tree==0) {Node* elem=new Node{k,v}; first=elem ; root=elem; last=elem; size_tree=1;return;};
+     Node* p{root};
+// VERIFICA CHE LA CHIAVE NON SIA GIA NELL'ALBERO
+     if(trova(k)==true){
+        string s{"chiave già presente"};
+         cout<< s << endl;
+         return ;}
+      bool FIRST{true}; //booleano che serve a identificare l'ultimo nodo a sinistra, first
+      bool LAST{true};
+      while(!(p->left ==nullptr && p->right==nullptr) && !(p->left==nullptr && k<p->key) && !(p->right==nullptr && k>p->key)) {
+           if(k<p->key) {p=p->left;LAST=false;} //scende a sinistra. Se lo fa una volta sicuramente non è l'ultimo elemento
+           else {p=p->right;FIRST=false;}      //speculare, se scende a destra una volta certamente non è il first
+            }
+//per la condizione del while, p è l'ultimo nodo preesistente
+      Node* elem=new Node{k,v,nullptr,nullptr,p}; //inserisce il nuovo nodo con p parente
+      if(k<p->key) {p->left=elem; if (FIRST==true) first=elem;} //aggiorna il ramo sinistro di p
+      else {p->right=elem; if (LAST==true) last=elem; };          //aggiorna il ramo destro di p
+                size_tree++; //aggiornamento grandezza albero
+}
 
