@@ -227,7 +227,19 @@ public:
         ctr_insert(*this,t.root);
         
     }
-       
+   //funzione clear
+    void Clear(){
+        iterator i{first};
+        iterator p{nullptr};
+        while(i!=last) {
+            p=i;
+            ++i;
+            delete p.node();
+        };
+        delete last;
+    }
+    
+    
 //infine metto il distruttore di default
     ~Tree()=default;
 };
@@ -270,8 +282,8 @@ int main() {
     cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
     cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
     Albero_copia.Insert("maurizio",2);
-    Albero_copia.Insert("zorro",9);
     cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
     cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-
+    //Albero_copia.Clear();
+    cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
 }
