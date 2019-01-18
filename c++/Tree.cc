@@ -2,8 +2,10 @@
 #include<memory>
 
 using std::string;
+using std::cout;
+using std::endl;
 
-//IN QUESTO  CODICE SI IMPLEMENTA I CONSTITERATOR INDIPENDENTEMENTE DAGLI ITERATOR--> MOLTO SCOMODO VISTO CHE IL CODICE DIVENTA INCREDIBILMENTE LUNGO: ITERATOR E CONST ITERATOR SONO PRATICAMENTE UGUALI! PROVO A FARE CLASSE EREDITATA!
+
 
 template<typename T,typename W>
 class Tree{
@@ -18,6 +20,10 @@ class Tree{
         Node (T& k, W& v, Node* l=nullptr, Node* r=nullptr,Node* lp=nullptr, Node* rp=nullptr):
         key{k}, value{v}, left{l}, right{r}, lparent{lp},rparent{rp} {}
         ~Node()=default;
+        
+        //copy constructor per il nodo
+        Node(const Tree<T, W>::Node& n):
+        key{n.key}, value{n.value}, left{nullptr}, right{nullptr}, lparent{nullptr},rparent{nullptr} {}
        
     };
 
@@ -25,6 +31,14 @@ class Tree{
     Node* root;
     Node* last;
     unsigned int size_tree; //grandezza dell'albero
+    
+    //Metodo privato di insert,utilizzato nella copy semantic
+    void ctr_insert(Tree& t, Node* n) {
+        cout<<n->key<<endl;
+        t.Insert(n->key, n->value);
+        if(n->left==nullptr and n->right==nullptr) return;
+        if(n->left!=nullptr) ctr_insert(t,n->left);
+        if(n->right!=nullptr)ctr_insert(t,n->right);}
 
     
 public:
@@ -75,22 +89,16 @@ public:
         
         //metodi di iterator!
         //metodo begin--> ritorn l'iteratore first,cioè quello con la chiave più piccola
-        iterator begin(){
-            return iterator{first};
-            }
-        //metodo end-->ritorna l'iteratore dopo last--> NON SICURO
-        iterator end(){
-           return iterator{nullptr};
-        }
+        iterator begin(){return iterator{first};}
+        //metodo end-->ritorna l'iteratore dopo last-->nullptr
+        iterator end(){return iterator{nullptr};}
         
         // ritorna l'iteratore con chiave più grande
-        iterator last(){
-            return iterator{last};
-        }
+        iterator last(){return iterator{last};}
         //ritorna l'iteratore puntato alla radice
-        iterator root(){
-            return iterator{root};
-        }
+        iterator root(){return iterator{root};}
+        
+        
         iterator& operator++(){
                 if(current->right!=nullptr){ //cerca se può scendere a destra
                     current=current->right;
@@ -121,12 +129,8 @@ public:
             //da implementare
           //  return *this;    
             //}
-        T operator*() {
-            return current->key;
-            }
-        W operator!(){
-            return current->value;
-        }
+        T operator*() {return current->key;}
+        W operator!(){return current->value;}
         bool operator==(const iterator& b){return current==b.current;}
         bool operator!=(const iterator& b){return current!=b.current;}
     };
@@ -138,33 +142,20 @@ public:
         Constiterator(const Node* p): corrente{p} {}
     
     
-    Constiterator cbegin() const {
-        return Constiterator{first};
-    }
+    Constiterator cbegin() const {return Constiterator{first};}
     
-    Constiterator cend() const {
-        return Constiterator{nullptr};
-    }
+    Constiterator cend() const {return Constiterator{nullptr};}
     
-    Constiterator croot() const{
-        return Constiterator{root};
-    }
-    Constiterator clast() const{
-        return Constiterator{last};
-    }
-    T operator*() {
-      return corrente->key;
-        }
-    W operator!(){
-      return corrente->value;
-        }
+    Constiterator croot() const{return Constiterator{root};}
+    Constiterator clast() const{return Constiterator{last};}
     
-    bool operator==(const Constiterator& b){
-        return corrente==b.corrente;
-        }
-    bool operator!=(const Constiterator& b){
-        return corrente!=b.corrente;
-        }
+    T operator*() {return corrente->key;}
+    
+    W operator!(){return corrente->value;}
+    
+    bool operator==(const Constiterator& b){return corrente==b.corrente;}
+    
+    bool operator!=(const Constiterator& b){return corrente!=b.corrente;}
         
     Constiterator& operator++(){
         if(corrente->right!=nullptr){ //cerca se può scendere a destra
@@ -225,6 +216,16 @@ public:
        std::cout<< "key not found!"<<std::endl;
        return j;
    }
+    
+// copy semantic
+    Tree (const Tree<T,W>& t):   //è da implementare la costruzione mediante il metodo insert
+    first{nullptr},
+    root {nullptr},
+    last{nullptr},
+    size_tree{0}  {
+        ctr_insert(*this,t.root);
+        
+    }
        
 //infine metto il distruttore di default
     ~Tree()=default;
@@ -243,22 +244,33 @@ std::ostream& operator<<(std::ostream& os, const Tree<T,W>& l) {
 
 int main() {
 
-Tree<string, long long int> Albero;
-
-Albero.Insert("alberto",3409941121);
-Albero.Insert("giacomo",3389543211);
-Albero.Insert("francesco",3393578976);
-Albero.Insert("giulia",3315899435);
-Albero.Insert("eleonora",338775523);
-Albero.Insert("andrea",340987436);
-
-std::cout<<Albero.Size()<<std::endl<<std::endl;
-
-std::cout<<"ecco l'albero!"<<std::endl;
-std::cout<< Albero <<std::endl;
-   
-
+    Tree<string, long long int> Albero;
+    
+    Albero.Insert("alberto",3409941121);
+    Albero.Insert("giacomo",3389543211);
+    Albero.Insert("francesco",3393578976);
+    Albero.Insert("giulia",3315899435);
+    Albero.Insert("eleonora",338775523);
+    Albero.Insert("andrea",340987436);
+    
+    cout<<Albero.Size()<<endl<<endl;
+    
+    cout<<"ecco l'albero!"<<endl;
+    cout<< Albero <<endl;
+    
+    
     Tree<string,long long int>::iterator j{Albero.find("giulia")};
+    
+    cout<<*j<<endl<<endl;
+    
+    Tree<string, long long int> Albero_copia{Albero};
+    cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
+    Albero.Insert("gigi",1);
+    cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
+    cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
+    Albero_copia.Insert("maurizio",2);
+    Albero_copia.Insert("zorro",9);
+    cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
+    cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
 
-    std::cout<<*j<<std::endl;
 }
