@@ -7,7 +7,7 @@ using std::endl;
 
 
 
-//fatto fino ad no_inheritance_1
+//fatto fino ad no_inheritance_3
 template<typename T,typename W>
 class Tree{
 
@@ -20,11 +20,12 @@ class Tree{
         Node* rparent;
         Node (T& k, W& v, Node* l=nullptr, Node* r=nullptr,Node* lp=nullptr, Node* rp=nullptr):
         key{k}, value{v}, left{l}, right{r}, lparent{lp},rparent{rp} {}
-        ~Node()=default;
+        ~Node() {left=nullptr;right=nullptr;lparent=nullptr;rparent=nullptr;}
         
+        /*
         //copy constructor per il nodo
         Node(const Tree<T, W>::Node& n):
-        key{n.key}, value{n.value}, left{nullptr}, right{nullptr}, lparent{nullptr},rparent{nullptr} {}
+        key{n.key}, value{n.value}, left{nullptr}, right{nullptr}, lparent{nullptr},rparent{nullptr} {}*/
        
     };
 
@@ -82,7 +83,7 @@ public:
     
     
     
-public:
+public: //forse va cancellato
     struct iterator{
         Node* current;
         iterator(Node* p):
@@ -227,21 +228,28 @@ public:
         ctr_insert(*this,t.root);
         
     }
-   //funzione clear
-    void Clear(){
-        iterator i{first};
-        iterator p{nullptr};
-        while(i!=last) {
-            p=i;
-            ++i;
-            delete p.node();
-        };
-        delete last;
+    //clear dell'albero:funziona in maniera ricorsiva
+    void recursive_clear(Node* n){
+        Node* l{n->left};
+        Node* r{n->right};
+        delete n;
+        n=nullptr;
+        if(l==nullptr and r==nullptr) return;
+        if(l!=nullptr) recursive_clear(l);
+        if(r!=nullptr) recursive_clear(r);
+    }
+    void Clear() {
+        if(size_tree==0) return;
+        Node* n{root};
+        root=nullptr;
+        first=nullptr;
+        last=nullptr;
+        recursive_clear(n);
+        size_tree=0;
     }
     
-    
 //infine metto il distruttore di default
-    ~Tree()=default;
+    ~Tree() {Clear();}
 };
 
 template<typename T,typename W>
@@ -284,6 +292,9 @@ int main() {
     Albero_copia.Insert("maurizio",2);
     cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
     cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-    //Albero_copia.Clear();
+    Albero_copia.Clear();
+    //cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
     cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
+    Tree<string, long long int> Albero_vuoto;
+    Albero_vuoto.Clear();
 }
