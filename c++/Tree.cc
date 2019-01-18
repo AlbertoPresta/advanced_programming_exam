@@ -7,6 +7,7 @@ using std::endl;
 
 
 
+//fatto fino ad no_inheritance_1
 template<typename T,typename W>
 class Tree{
 
