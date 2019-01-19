@@ -1,5 +1,6 @@
 
 #include<iostream>
+#include<memory>
 #include<utility>
 
 using std::string;
@@ -168,7 +169,7 @@ public: //forse va cancellato
         bool operator==(const iterator& b){return current==b.current;}
         bool operator!=(const iterator& b){return current!=b.current;}
         
-        Node* node() const{return current;}
+        Node* node() {return current;}
     };
     
     
@@ -179,8 +180,8 @@ public: //forse va cancellato
     //CONST ITERATOR
     
     struct Constiterator{
-        const Node* current;
-        Constiterator(const Node* p): current{p} {}
+        Node* current;
+        Constiterator( Node* p): current{p} {}
         
         
         Constiterator cbegin() const {
@@ -267,6 +268,7 @@ public: //forse va cancellato
             return *this;
             
         };
+        Node* node() {return current;}
         
         ~Constiterator()= default;
     };
@@ -278,24 +280,12 @@ public: //forse va cancellato
     iterator find(const T t){
         Node* j{root};
         while(j!=nullptr){
-            
             if(j->key == t){
                 cout<<"key found!"<<endl;
-                return j;
-            }
+                return j;}
             else{
-                if(j->key > t){
-                    
-                    j=j->left;
-                    
-                }
-                
-                else{
-                    
-                    j=j->right;
-                    
-                }
-            }
+                if(j->key > t){j=j->left;}
+                else{j=j->right;}}
         }
         cout<< "key not found!"<<endl;
         return j;
@@ -394,6 +384,84 @@ public: //forse va cancellato
     }
     
     
+    void Bal_reinsert(Node* n,Node* r) {
+        Node* p{r};
+        while(!(p->left ==nullptr and p->right==nullptr) and !(p->left==nullptr and n->key < p->key) and !(p->right==nullptr and n->key > p->key)) {
+            if(n->key<p->key) {p=p->left;}
+            else {p=p->right;};
+        };
+        
+        
+        if(n->key<p->key) {p->left=n;    n->parent=p; }       //aggiorna il ramo sinistro di p
+        else         {p->right=n;   n->parent=p; };          //aggiorna il ramo destro di p
+    }
+    
+    void Rec_Balance(Node* m, Node* r, int lun, int k){
+        if(k>0){k--;
+            cout<<endl<<endl<<"med "<<m->key<<"  root "<<r->key<<endl<<endl;
+            
+            if(m!=r){
+                while (m->parent != r) {
+                    
+                    Node* a{m};
+                    if(a->parent->key < m->key){
+                        while (a->parent->key < m->key  and a->parent != r) {/*cout<<"left a key  "<<a->key<<endl;*/a=a->parent;};
+                        cout<<"to the left "<<a->key<<endl;
+                        cout<<*this<<endl;
+                        //cout<<"left "<<a->key<<endl;
+                        //cout<<"mp left  "<<m->parent->key<<endl;
+                        m->parent->right=nullptr;
+                        m->parent=a->parent;
+                        if(a->parent->key < m->key) {a->parent->right=m;}
+                        else {a->parent->left=m;};
+                        a->parent=nullptr;
+                        Bal_reinsert(a,m);
+                        a=m;
+                        cout<<"stampa"<<endl<<*this<<endl;};
+                    if (a->parent != r) {
+                        while (a->parent->key > m->key  and a->parent != r) {/*cout<<"right a key  "<<a->key<<endl;*/a=a->parent;};
+                        cout<<"to the right "<<a->key<<endl;
+                        cout<<*this<<endl;
+                        m->parent->left=nullptr;
+                        m->parent=a->parent;
+                        if(a->parent->key < m->key) {a->parent->right=m;}
+                        else {a->parent->left=m;};
+                        a->parent=nullptr;
+                        Bal_reinsert(a,m);
+                        a=m;  };
+                    cout<<"stampa"<<endl<<*this<<endl;
+                };
+            };
+            int lun_l{lun/2};
+            int lun_r{lun-1-lun_l};
+            iterator i{m};
+            iterator j{m};
+            
+            if(lun_l>0) {
+                for(int ii{1};ii<=lun_l/2+lun_l%2;ii++) --i;
+                Rec_Balance(i.node(),m,lun_l,k);
+            };
+            if(lun_r>0) {
+                for(int jj{0};jj<=lun_r/2;jj++) ++j;
+                Rec_Balance(j.node(),m,lun_r,k);
+            };
+            
+            
+        };
+        return;
+        
+    }
+    
+    void Balance(){
+        
+        iterator i{first};
+        for(unsigned int ii{1};ii<size_tree/2+1;ii++) ++i;
+        Rec_Balance(i.node(),root,size_tree,25);
+        root=i.node();
+        
+    }
+    
+    
     
 };
 
@@ -402,10 +470,20 @@ std::ostream& operator<<(std::ostream& os, const Tree<T,W>& l) {
     if (l.Size()==0) {cout<<"empty tree"<<endl; return os;}
     else {
         typename Tree<T,W>::Constiterator j = l.first;
+        int le,ri;
         for(; j!=l.last;++j){
-            os <<"key: "<<*j<<"   parent: " <<!j<<endl;
+            
+            if(j.node()->left==nullptr) {le=99999;}
+            else {le=j.node()->left->key;};
+            if(j.node()->right==nullptr) {ri=99999;}
+            else {ri=j.node()->right->key;};
+            os <<"key: "<<*j<<"   parent: " <<!j<<"        left: "<<le<<"   right: "<<ri<<endl;
         }
-        os <<"key: "<<*j<<"   parent: " <<!j<<endl;
+        if(j.node()->left==nullptr) {le=99999;}
+        else {le=j.node()->left->key;};
+        if(j.node()->right==nullptr) {ri=99999;}
+        else {ri=j.node()->right->key;};
+        os <<"key: "<<*j<<"   parent: " <<!j<<"        left: "<<le<<"   right: "<<ri<<endl;
         
         return os ;}
 }
@@ -420,14 +498,14 @@ int main() {
     
     
     Tree<int, long long int> A;
-    A.Insert(1,1);
+    A.Insert(8,1);
     A.Insert(2,2);
     A.Insert(3,3);
     A.Insert(4,5);
     A.Insert(5,0);
     A.Insert(6,0);
     A.Insert(7,0);
-    A.Insert(8,0);
+    A.Insert(1,0);
     A.Insert(9,0);
     A.Insert(10,0);
     A.Insert(11,0);
@@ -437,9 +515,9 @@ int main() {
     A.Insert(13,0);
     //cout<<A<<endl;
     A.print();
-    A.balance();
+    A.Balance();
     A.print();
-    cout<<endl<<A<<endl;
+    cout<<endl<<"++++++++++++++"<<endl <<A<<endl;
     
     Tree<int, long long int> B{A};
     B.Insert(16,2);
