@@ -1,4 +1,5 @@
-//5
+//7
+
 #include<iostream>
 #include<memory>
 
@@ -6,6 +7,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
+//IN QUESTO  CODICE SI IMPLEMENTA I CONSTITERATOR INDIPENDENTEMENTE DAGLI ITERATOR--> MOLTO SCOMODO VISTO CHE IL CODICE DIVENTA INCREDIBILMENTE LUNGO: ITERATOR E CONST ITERATOR SONO PRATICAMENTE UGUALI! PROVO A FARE CLASSE EREDITATA!
 
 template<typename T,typename W>
 class Tree{
@@ -41,9 +43,10 @@ class Tree{
     
 public:
     
-    T First() const{return first->key;}
-    T Last() const{return last->key;}
-    T Root() const{return root->key;}
+    Node* First() const{return first;}
+    Node* Last() const{return last;}
+    Node* Root() const{return root;}
+    void print() const{cout<<"first "<<first->key<<"   root "<<root->key<<"     last "<<last->key<<endl;}
     unsigned int Size() const{return size_tree;}  //funzione per stampare la grandezza dell'albero
     
     template<typename OT,typename OW>
@@ -121,7 +124,7 @@ public: //forse va cancellato
                         return *this;
                      }
                      else {
-                        while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
+                        while(current->key  >  current->parent->key) { //in alternativa risale a sinistra
                             current=current->parent;
                             };
                             current=current->parent;  //infine sale a destra
@@ -131,15 +134,39 @@ public: //forse va cancellato
 		               };
 		               return *this;    
 		               }
-        //Iterator& operator--(){   --> secondo me non serve
-            //da implementare
-          //  return *this;    
-            //}
+        iterator& operator--(){  
+         if(current->left!=nullptr){ //cerca se può scendere a destra
+                    current=current->left;
+                    if(current->right!=nullptr){
+                        while(current->right!=nullptr){  //da qui scende a sinistra fin tanto possibile
+                            current=current->right;
+                            }
+                        }
+                    return *this;
+                    }
+                else {
+                    if(current->key  >  current->parent->key) { //se può risale a destra
+                        current=current->parent;
+                        return *this;
+                     }
+                     else {
+                        while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
+                            current=current->parent;
+                            };
+                            current=current->parent;  //infine sale a destra
+		                       return *this;
+		                   };
+            
+		               };
+		               return *this;
+        
+        }
         T operator*() {
             return current->key;
             }
-        W operator!(){
-            return current->value;
+        T operator!(){
+            if(current->parent==nullptr) return 10000;
+            return current->parent->key;
         }
         bool operator==(const iterator& b){return current==b.current;}
         bool operator!=(const iterator& b){return current!=b.current;}
@@ -176,8 +203,9 @@ public: //forse va cancellato
         T operator*() {
           return current->key;
             }
-        W operator!(){
-          return current->value;
+        T operator!(){
+            if(current->parent==nullptr) return 10000;
+          return current->parent->key;
             }
         
         bool operator==(const Constiterator& b){
@@ -204,7 +232,7 @@ public: //forse va cancellato
                         return *this;
                      }
                      else {
-                        while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
+                        while(current->key  >  current->parent->key) { //in alternativa risale a sinistra
                             current=current->parent;
                             };
                             current=current->parent;  //infine sale a destra
@@ -215,6 +243,33 @@ public: //forse va cancellato
 		               return *this;    
 		               }
 		               };
+       Constiterator& operator--(){  
+         if(current->left!=nullptr){ //cerca se può scendere a destra
+                    current=current->left;
+                    if(current->right!=nullptr){
+                        while(current->right!=nullptr){  //da qui scende a sinistra fin tanto possibile
+                            current=current->right;
+                            }
+                        }
+                    return *this;
+                    }
+                else {
+                    if(current->key  >  current->parent->key) { //se può risale a destra
+                        current=current->parent;
+                        return *this;
+                     }
+                     else {
+                        while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
+                            current=current->parent;
+                            };
+                            current=current->parent;  //infine sale a destra
+		                       return *this;
+		                   };
+            
+		               };
+		               return *this;
+        
+        };
             
         ~Constiterator()= default;
         };
@@ -285,6 +340,56 @@ public: //forse va cancellato
      
 //infine metto il distruttore di default
     ~Tree() {Clear();}
+    
+    
+
+void rec_balance(int s, Tree<T,W>& b, Tree<T,W>::iterator m, int lun) {
+    
+    b.Insert(*m,9999);
+    Node* p{b.Root()};
+    /*if (b.Size()>9){
+    Constiterator iter{b.First()};
+    cout<<"Albero provvisorio"<<endl;
+    for(int k{1};k<10;k++) {cout<<*iter<<" "<<" parent"<<!iter<<endl; ++iter;}
+    cout<<endl;};*/
+    if(b.Size()==s) return;
+    
+    int lun_l{lun/2};
+    int lun_r{lun-1-lun_l};
+    iterator i{m};
+    iterator j{m};
+    
+    if(lun_l>0) {
+        for(int ii{1};ii<=lun_l/2+lun_l%2;ii++) --i;
+        cout<<endl;
+        rec_balance(s,b,i,lun_l);
+        };
+    if(lun_r>0) {
+        for(int jj{0};jj<=lun_r/2;jj++) ++j;
+        rec_balance(s,b,j,lun_r);
+        };
+    return;  
+}
+
+
+void balance() {
+    cout<<root->key<<endl;
+    Tree<T,W> b;
+    iterator i{first};
+    for(int ii{1};ii<size_tree/2+1;ii++) ++i;
+    rec_balance(size_tree,b,i,size_tree);
+    
+    root=b.Root();
+    first=b.First();
+    last=b.Last();
+    cout<<root->key<<endl;
+    cout<<first->key<<endl;
+    cout<<last->key<<endl;
+    
+}
+    
+    
+    
 };
 
 template<typename T,typename W>
@@ -293,48 +398,43 @@ std::ostream& operator<<(std::ostream& os, const Tree<T,W>& l) {
     else {
     typename Tree<T,W>::Constiterator j = l.first;
     for(; j!=l.last;++j){
-        os <<"key: "<<*j<<"   value: " <<!j<<endl;
+        os <<"key: "<<*j<<"   parent: " <<!j<<endl;
         }
-    os <<"key: "<<*j<<"   value: " <<!j<<endl;
+    os <<"key: "<<*j<<"   parent: " <<!j<<endl;
 
     return os ;}
 }
 
+
+
+
 int main() {
 
-Tree<string, long long int> Albero;
 
-Albero.Insert("alberto",3409941121);
-Albero.Insert("giacomo",3389543211);
-Albero.Insert("francesco",3393578976);
-Albero.Insert("giulia",3315899435);
-Albero.Insert("eleonora",338775523);
-Albero.Insert("andrea",340987436);
 
-cout<<"size "<<Albero.Size()<<"  first "<<endl<<endl;
-Albero.First();
 
-cout<<endl<<"ecco l'albero!"<<endl;
-cout<< Albero <<endl;
-   
 
-    Tree<string,long long int>::iterator j{Albero.find("giulia")};
+Tree<int, long long int> A;
+A.Insert(1,1);
+A.Insert(2,2);
+A.Insert(3,3);
+A.Insert(4,5);
+A.Insert(5,0);
+A.Insert(6,0);
+A.Insert(7,0);
+A.Insert(8,0);
+A.Insert(9,0);
+A.Insert(10,0);
+A.Insert(11,0);
+A.Insert(12,0);
+A.Insert(15,0);
+A.Insert(14,0);
+A.Insert(13,0);
+//cout<<A<<endl;
+A.print();
+A.balance();
+A.print();
+cout<<endl<<A<<endl;
 
-    cout<<*j<<endl<<endl;
-
-Tree<string, long long int> Albero_copia{Albero};
-cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-Albero.Insert("gigi",1);
-cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
-cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-Albero_copia.Insert("maurizio",2);
-cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
-cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-Albero_copia.Clear();
-//cout<<endl<<"Albero"<<endl<<Albero<<endl<<endl;
-cout<<endl<<"Albero copia"<<endl<<Albero_copia<<endl<<endl;
-Tree<string, long long int> Albero_vuoto;
-Albero_vuoto.Clear();
-cout<<Albero_vuoto<<endl;
 
 }
