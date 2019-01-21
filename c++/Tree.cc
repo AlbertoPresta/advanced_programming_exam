@@ -1,4 +1,4 @@
-
+//14
 #include<iostream>
 #include<utility>
 #include<cmath>
@@ -176,6 +176,7 @@ public: //forse va cancellato
         Node* node() const {return current;}
     };
     
+public:
     //metodi di iterator
     iterator ibegin(){
         return iterator{first};
