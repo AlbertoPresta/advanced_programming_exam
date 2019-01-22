@@ -1,31 +1,51 @@
-//pushato test.cc
+//pushato test2.cc
+/******************************************************************
+ *
+ *
+ *       Binary search tree class
+ *
+ *       In questi file implementiamo una classe per un bst.
+ *       La classe ha come attributi privati una struct Node templetizzato che contiene i nodi dell'albero:
+ *       Ogni nodo possiede una chiave, un valore, due pointer ai sottostante di sinistra e di destra e un pointer all'elemento sovrastante.
+ *       La classe tree ha quattro variabili private: una size_tree che indica la dimensione dell'albero e tre pointer che indicano la
+ *       la radice, l'elemento più piccolo e quello più grande.
+ *
+ *       L'albero ha inoltre due struct pubbliche: iterator e constiterator. La differenza fra le due consiste nella possibilità per gli iterator
+ *       di modificare il valore del nodo a cui puntano. Anche per gli iterator tuttavia le chaivi sono accessibili solo in lettura, questo perchè
+ *       altrimenti, una modifica della chiave potrebbe compromettere il funzionamento corretto dell'albero.
+ *
+ *       Molti dei metodi pubblici della classe fanno uso di sottofunzioni ricorsive, che sono però private per prevenirene un'utilizzo imoproprio
+ *       essendo esse implementate solo ed esclusivamente per supportare i metodi pubblici da cui sono chiamate.
+ *
+ *
+ *
+ *******************************************************************/
+
+
+/*   mancancti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+ -confronto std::map
+ 
+ */
+
+
+
+
 #include<iostream>
 #include<utility>
 #include<cmath>
 #include<vector>
 #include<ctime>
-#include<chrono>
 using std::string;
 using std::cout;
 using std::endl;
 
 
-
+//classe errore funzionale al throw dell'exception
 class ex_key {};
 
 
-/*   mancancti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
- -test
- 
- -ultimo punto
- 
- 
- 
- */
-
-//IN QUESTO  CODICE SI IMPLEMENTA I CONSTITERATOR INDIPENDENTEMENTE DAGLI ITERATOR--> MOLTO SCOMODO VISTO CHE IL CODICE DIVENTA INCREDIBILMENTE LUNGO: ITERATOR E CONST ITERATOR SONO PRATICAMENTE UGUALI! PROVO A FARE CLASSE EREDITATA!
-
+//classe Tree
 template<typename T,typename W>
 class Tree{
     
@@ -38,14 +58,9 @@ class Tree{
         Node (T& k,W& v, Node* l=nullptr, Node* r=nullptr,Node* p=nullptr):
         key{k}, value{v}, left{l}, right{r}, parent{p} {}
         ~Node() {left=nullptr;right=nullptr;parent=nullptr;}
-        
-        
-        /*   //copy constructor per il nodo
-         Node(const Tree<T, W>::Node& n):
-         key{n.key}, value{n.value}, left{nullptr}, right{nullptr}, lparent{nullptr},rparent{nullptr} {}*/
-        
     };
     
+    //variabili dell'albero
     Node* first;
     Node* root;
     Node* last;
@@ -55,29 +70,29 @@ class Tree{
     
 public:
     
+    //info sull'albero
     Node* First() const{return first;}
     Node* Last() const{return last;}
     Node* Root() const{return root;}
     void print() const{cout<<"first "<<first->key<<"   root "<<root->key<<"     last "<<last->key<<"    size "<<size_tree<<endl;}
     unsigned int Size() const{return size_tree;}  //funzione per stampare la grandezza dell'albero
     
-    //template<typename OT,typename OW>
-    //friend std::ostream& operator<<(std::ostream&, const Tree<OT,OW>&);
-    Tree(): //costruttore dell'albero
-    first{nullptr},root{nullptr},last{nullptr},size_tree{0} {
-        // Node* sentinel = new Node{T{},W{},nullptr,nullptr,nullptr};
-    }
+    
+    //Costruttore dell'albero vuoto
+    Tree(): //
+    first{nullptr},root{nullptr},last{nullptr},size_tree{0} {}
     
     
     
-    //insert dedicato al time testing
-    void test_insert(int n) {
+    //insert simile una linked list, utile al performance testing
+    void Linked_insert(int n) {
         int j{1};
         Node* elem=new Node{j,j};first=elem ; root=elem; last=elem;  size_tree=1;
         for(int i{2};i<n;i++) {elem=new Node{i,j,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
         last=elem;
     }
-    //Insert non accetta referenza perchè può essere chiamato by value
+    
+    //Metodo insert vero e proprio
     void Insert(T k,W v)  {
         //inserimento primo elemento
         if (size_tree==0) {Node* elem=new Node{k,v}; first=elem ; root=elem; last=elem;  size_tree=1;return;};
@@ -101,34 +116,32 @@ public:
         else {p->right=elem; if (LAST==true) last=elem; };          //aggiorna il ramo destro di p
         
         size_tree++; //aggiornamento grandezza albero
-        
     }
     
     
     
-    struct iterator{
+    struct iterator {
+        
         Node* current;
         iterator(Node* p):
         current{p} {}
         
-        //metodi di iterator!
-        //metodo begin--> ritorn l'iteratore first,cioè quello con la chiave più piccola
         
         iterator& operator++(){
             if(current->right!=nullptr){ //cerca se può scendere a destra
                 current=current->right;
                 if(current->left!=nullptr){
                     while(current->left!=nullptr){  //da qui scende a sinistra fin tanto possibile
-                        current=current->left;
-                    }
+                        current=current->left;}
                 }
                 return *this;
             }
+            
             else {
                 if(current->key  <  current->parent->key) { //se può risale a destra
                     current=current->parent;
-                    return *this;
-                }
+                    return *this;}
+                
                 else {
                     //l'ultima condizione serve per evitare di proseguire se si arriva alla radice
                     while(current->parent!=nullptr && current->key  >  current->parent->key ) { //in alternativa risale a sinistra
@@ -136,54 +149,50 @@ public:
                     };
                     if(current->parent!=nullptr){ //se siamo arrivati in un nodo diverso dalla radice allora va bene
                         current=current->parent;  //infine sale a destra
-                        return *this;
-                    }
-                    else{ // se siamo qua allora siamo nella radice,questo vuol dire che siamo partiti dal last!
+                        return *this;}
+                    
+                    else{ // se siamo qua allora siamo nella radice,questo vuol dire che è partito dal last
                         current = nullptr;
-                        return *this;
-                    }
+                        return *this;}
                 }
-                
             }
             return *this;
         }
+        
         iterator& operator--(){
             if(current->left!=nullptr){ //cerca se può scendere a destra
                 current=current->left;
                 if(current->right!=nullptr){
                     while(current->right!=nullptr){  //da qui scende a sinistra fin tanto possibile
-                        current=current->right;
-                    }
+                        current=current->right;}
                 }
                 return *this;
             }
+            
             else {
                 if(current->key  >  current->parent->key) { //se può risale a destra
                     current=current->parent;
-                    return *this;
-                }
+                    return *this;}
+                
                 else {
                     while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
-                        current=current->parent;
-                    };
+                        current=current->parent;};
                     current=current->parent;  //infine sale a destra
                     return *this;
                 };
                 
             };
             return *this;
-            
         }
-        const T& operator*() const {
-            return current->key;
-        }
-        W& operator!() const{
-            return current->value;
-        }
+        
+        //la chiave non è accessibile. Una modifica della chiave potrebbe compromettere l'albero
+        const T& operator*() const {return current->key;}
+        
+        W& operator!() const{return current->value;}  //ritorno del valore
+        
         bool operator==(const iterator& b) const {return current==b.current;}
         bool operator!=(const iterator& b) const {return current!=b.current;}
-        
-        Node* node() const {return current;}
+        Node* node() const{return current;}
     };
     
     
@@ -191,13 +200,12 @@ public:
     iterator ibegin(){
         return iterator{first};
     }
-    //metodo end-->ritorna l'iteratore dopo last--> NON SICURO
+    //metodo end-->ritorna l'iteratore dopo last
     iterator iend(){
         return iterator{nullptr};
     }
     
     // ritorna l'iteratore con chiave più grande
-    
     iterator ilast(){
         return iterator{last};
     }
@@ -210,121 +218,94 @@ public:
     
     
     
-    //CONST ITERATOR
     
-    class Constiterator{
+    struct Constiterator{
         Node* current;
     public:
-        Constiterator( Node* p): current{p} {
-            
-        }
+        Constiterator( Node* p): current{p} {}
+        ~Constiterator()= default;
         
         
+        const T& operator*() const  {return current->key;}
+        const W& operator!() const {return current->value;}
         
-        const T& operator*() const  {
-            return current->key;
-        }
-        const W& operator!() const {
-            return current->value;
-        }
+        bool operator==(const Constiterator& b) const{
+            return current==b.current;}
         
-        bool operator==(const Constiterator& b){
-            return current==b.current;
-        }
-        bool operator!=(const Constiterator& b){
-            return current!=b.current;
-        }
+        bool operator!=(const Constiterator& b) const{
+            return current!=b.current;}
+        
+        const Node* node() const {return current;}
         
         T& parent_key()  {
             if(current->parent==nullptr) {cout<<"we are in the root"<<endl; return current->key;};
-            return current->parent->key;
-        }
+            return current->parent->key;}
         
         Constiterator& operator++(){
             
-            if(current->right!=nullptr){ //cerca se può scendere a destra
+            if(current->right!=nullptr){
                 current=current->right;
                 if(current->left!=nullptr){
-                    while(current->left!=nullptr){  //da qui scende a sinistra fin tanto possibile
-                        current=current->left;
-                    }
+                    while(current->left!=nullptr){
+                        current=current->left;}
                 }
                 return *this;
             }
+            
             else {
-                if(current->key  <  current->parent->key) { //se può risale a destra
+                if(current->key  <  current->parent->key) {
                     current=current->parent;
-                    return *this;
-                }
+                    return *this;}
+                
                 else {
-                    //la condizione current->parent!=nullptr ci garantisce il non finire sulla radice
-                    
-                    while(current->parent!=nullptr && current->key  >  current->parent->key) { //in alternativa risale a sinistra
-                        //cout<<"check-in "<<current->key<<endl;
-                        current=current->parent;
-                    }
-                    if(current->parent!=nullptr){ //se siamo arrivati in un nodo diverso dalla radice allora va bene
-                        current=current->parent;  //infine sale a destra
-                        return *this;
-                    }
-                    else{ // se siamo qua allora siamo nella radice,questo vuol dire che siamo partiti dal last!
-                        current = nullptr;
-                        return *this;
-                    }
-                    
+                    while(current->parent!=nullptr && current->key  >  current->parent->key) { current=current->parent;}
+                    if(current->parent!=nullptr)   {current=current->parent; return *this;}
+                    else  {current = nullptr; return *this;}
                 };
                 
                 return *this;
             }
         }
         
-        const Node* node() const {return current;}
-        
-        ~Constiterator()= default;
-        
-    private:
         
         Constiterator& operator--(){
-            if(current->left!=nullptr){ //cerca se può scendere a destra
+            if(current->left!=nullptr) {
                 current=current->left;
                 if(current->right!=nullptr){
-                    while(current->right!=nullptr){  //da qui scende a sinistra fin tanto possibile
-                        current=current->right;
-                    }
+                    while(current->right!=nullptr){ current=current->right;}
                 }
                 return *this;
             }
             else {
-                if(current->key  >  current->parent->key) { //se può risale a destra
-                    current=current->parent;
-                    return *this;
-                }
+                if(current->key  >  current->parent->key) { current=current->parent;  return *this;}
                 else {
-                    while(current->key  <  current->parent->key) { //in alternativa risale a sinistra
-                        current=current->parent;
-                    };
+                    while(current->key  <  current->parent->key) { current=current->parent;};
                     current=current->parent;  //infine sale a destra
                     return *this;
                 };
                 
             };
             return *this;
-            
         }
     };
+    //fine constiterator
     
     
     
-    //FINE CONST ITERATOR
-    //METODO FIND
+    //Metodi dell'albero
+    
+    const Constiterator cbegin() const { return Constiterator{first};}
+    const Constiterator cend() const { return Constiterator{nullptr};}
+    const Constiterator croot() const {return Constiterator{root};}
+    
     iterator find(const T t){
         Node* j{root};
         
         while(j!=nullptr){
-            if(j->key == t){
-                cout<<"key found!"<<endl;
-                iterator k{j};
+            if(j->key == t){  cout<<"key found!"<<endl;
+                iterator k {j};
                 return k;}
+            
             else{
                 if(j->key > t){j=j->left;}
                 else{j=j->right;}}
@@ -333,7 +314,11 @@ public:
         iterator k{j};
         return k;
     }
+    
+    
+    
 private:
+    //la funzione ctr_insert è chiamata dai metodi della copy-move semantics
     void ctr_insert(Tree& t, Node* n) {
         t.Insert(n->key, n->value);
         if(n->left==nullptr and n->right==nullptr) return;
@@ -342,23 +327,11 @@ private:
     
     
 public:
-    const Constiterator cbegin() const {
-        return Constiterator{first};
-    }
     
-    const Constiterator cend() const {
-        
-        return Constiterator{nullptr};
-    }
+    //copy-move semantics
     
-    const Constiterator croot() const{
-        return Constiterator{root};
-    }
-    
-    
-    //copy semantics
     Tree (const Tree<T,W>& t):
-    first{nullptr},
+    first{nullptr},//************************ forse queste 4 non servono perché non è possibile usare il copy ctr con un oggetto già def
     root {nullptr},
     last{nullptr},
     size_tree{0}  {
@@ -398,6 +371,8 @@ public:
     }
     
     
+    
+    // funzioni per il clear dell'albero
 private:
     
     void recursive_clear (Node* n) noexcept{
@@ -422,23 +397,36 @@ public:
         size_tree=0;
     }
     
+    //metodo che cancella l'albero in orizzontale
+    void Iter_clear() {
+        if (size_tree==0) return;
+        iterator i{first};
+        iterator j{i};
+        root=nullptr;
+        first=nullptr;
+        while(i!=ilast()) {
+            ++i;
+            if(j.node()->right!=nullptr and j.node()->parent!=nullptr) {
+                j.node()->right->parent=j.node()->parent;
+                if(j.node()->right->key < j.node()->parent->key ) {j.node()->parent->left=j.node()->right;}
+                else j.node()->parent->right=j.node()->right;
+            };
+            delete j.node() ;
+            j=i;
+        };
+        delete i.node();
+        last=nullptr;
+        size_tree=0;
+    }
     
     
-    //infine metto il distruttore di default
-    ~Tree() {Clear();}
     
     
     
-    
-    
-    
-    
-    
-    
+    //funzioni per il balance
 private:
     
-    
-    
+    //funzione per il metodo rec_balance che lavora con una copy-move
     void rec_balance (unsigned int s, Tree<T,W>& b, Tree<T,W>::iterator m, int lun) noexcept{
         
         b.Insert(*m,!m);
@@ -459,6 +447,10 @@ private:
         };
         return;
     }
+    
+    
+    
+    //funzioni chiamate da Rec_balance, chiamata a sua volta del secondo metodo Balance che agisce riassegnando i pointer
     
     void Bal_reinsert (Node* n,Node* r) noexcept{
         Node* p{r};
@@ -492,7 +484,7 @@ private:
     
     
     
-    
+    //funzione ricorsiva chiamata dal metodo Balance
     void Rec_Balance (Node* m, Node* r, int lun)noexcept{
         if(m!=r){
             while (m->parent != r) {
@@ -560,12 +552,12 @@ public:
                     a=m;  };
             };
         };
-        //ora che la mediana è sotto la root agisco sulla root
+        //ora la mediana è figlia della root, si puà infine agire sulla root
         i.node()->parent=nullptr;
         if(i.node()->key<root->key) {root->left=nullptr;}
         else {root->right=nullptr;};
-        Bal_reinsert(root,i.node()); //reinserisco la root
-        root=i.node(); //ridefinisco la root
+        Bal_reinsert(root,i.node()); //reinserisce la root
+        root=i.node(); //ridefinisce la root
         Rec_Balance(i.node(),root,size_tree);
     }
     
@@ -578,9 +570,13 @@ public:
         
     }
     
-    
+    //distrutore dell'albero
+    ~Tree() {Clear();}
     
 };
+//fine della classe Tree
+
+
 
 template<typename T,typename W>
 std::ostream& operator<<(std::ostream& os, const Tree<T,W>& l) {
@@ -618,51 +614,48 @@ int main() {
         
         Tree<int,  int> A;
         clock_t t{clock()};
-        A.test_insert(size);
+        A.Linked_insert(size);
         t=clock()-t;
-        cout<<"Tempo per l'insert dell'albero:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per l'insert dell'albero:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         
         Tree<int, int>::iterator j{A.Last()};
         int search=*j;
         Tree<int, int>::iterator m{A.Last()};
-        
         t=clock();
         m=A.find(search);
         t=clock()-t;
-        cout<<"Tempo per il find:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il find:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         
         t=clock();
         A.Balance();
         t=clock()-t;
-        cout<<"Tempo per il bilanciamento:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il bilanciamento:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         t=clock();
-        
         m=A.find(search);
         t=clock()-t;
-        
-        cout<<"Tempo per il find dopo il bilanciamento:  "<<((long double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il find dopo il bilanciamento:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         
         t=clock();
-        //A.Clear();
+        //A.Iter_clear();
         t=clock()-t;
-        cout<<"Tempo per il delete:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il delete:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         
         
         Tree<int,  int> B;
         t=clock();
-        B.test_insert(size);
+        B.Linked_insert(size);
         t=clock()-t;
-        cout<<"Tempo per l'insert dell'albero:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per l'insert dell'albero:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         Tree<int, int>::iterator k{B.Last()};
         
         search=*k;
@@ -671,20 +664,19 @@ int main() {
         t=clock();
         B.Balance();
         t=clock()-t;
-        cout<<"Tempo per il bilanciamento fast:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il bilanciamento fast:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         t=clock();
-        
         k=B.find(search);
         t=clock()-t;
-        
-        
-        cout<<"Tempo per il find dopo il bilanciamento:  "<<((double)t)/CLOCKS_PER_SEC<<endl<<endl;
+        cout<<"Tempo per il find dopo il bilanciamento:  "<<((float)t)/CLOCKS_PER_SEC<<endl<<endl;
         
         
         cout<<endl<<endl<<endl;
+        B.Clear();
         
-        
+        cout<<"OOOOOOOOOOOOOOOOOOOOOOOOOOO"<<endl;
+        A[4];
         
         
         return 0;
