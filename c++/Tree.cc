@@ -23,7 +23,7 @@
 
 /*   mancancti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
--confronto std::map 
+
 
 */
 
@@ -73,9 +73,9 @@ class Tree{
     Node* first;
     Node* root;
     Node* last;
-    K oper;
     unsigned int size_tree; //grandezza dell'albero
-        
+    K oper;
+    
     null_object<T> static null;
             
 public:
@@ -115,104 +115,47 @@ public:
         }
         
     //Metodo insert vero e proprio 
-    void Insert(T k,W v);  
+    void Insert(T k,W v);
     
     
 
         //metodi di iterator
-    iterator ibegin(){return iterator{first,*this};}
+    iterator ibegin() const {return iterator{first,*this};}
     
     //metodo end-->ritorna l'iteratore dopo last
-    iterator iend() {return iterator{nullptr,*this}; }
+    iterator iend() const  {return iterator{nullptr,*this}; }
     
     // ritorna l'iteratore con chiave più grande
-    iterator ilast(){return iterator{last,*this};  }
+    iterator ilast()const {return iterator{last,*this};  }
     
     //ritorna l'iteratore puntato alla radice
-    iterator iroot(){ return iterator{root,*this};  }
+    iterator iroot() const { return iterator{root,*this};  }
     
     
+    class Constiterator : public iterator {
+        
+        
+    public:
+        using parent = iterator;
+        using parent::iterator;
+        const T& operator*() const {return parent::operator*();}
+        const W& operator!() const {return parent::operator!();}
+        
+        
+        const Node* node() const {return parent::node();}
+        
+        const T&  parent_key() const {return parent::parent_key();}
+        
+    };
   
  
-    class Constiterator{
-        Node* current;
-        public:
-        Constiterator( Node* p): current{p} {}
-        ~Constiterator()= default;
-        
-        
-        const T& operator*() const  {return current->key;}
-        const W& operator!() const {return current->value;}
-        
-        bool operator==(const Constiterator& b) const{
-            return current==b.current;}
-            
-        bool operator!=(const Constiterator& b) const{
-            return current!=b.current;}
-        
-        const Node* node() const {return current;}
-        
-        T& parent_key()  {
-            if(current->parent==nullptr) {cout<<"we are in the root"<<endl; return current->key;};
-            return current->parent->key;}
-            
-        Constiterator& operator++(){
-            
-                if(current->right!=nullptr){ 
-                    current=current->right;
-                    if(current->left!=nullptr){
-                        while(current->left!=nullptr){  
-                            current=current->left;}
-                        }
-                    return *this;
-                    }
-                    
-                else {
-                    if(current->key  <  current->parent->key) { 
-                        current=current->parent;
-                        return *this;}
-                     
-                     else {
-                        while(current->parent!=nullptr && current->key  >  current->parent->key) { current=current->parent;}
-                        if(current->parent!=nullptr)   {current=current->parent; return *this;}     
-                        else  {current = nullptr; return *this;}
-                        };
-            
-                     return *this;
-		               }
-                }
-
-        
-        Constiterator& operator--(){  
-            if(current->left!=nullptr) { 
-                    current=current->left;
-                    if(current->right!=nullptr){
-                        while(current->right!=nullptr){ current=current->right;}
-                        }
-                    return *this;
-                    }
-                else {
-                    if(current->key  >  current->parent->key) { current=current->parent;  return *this;}
-                    else {
-                        while(current->key  <  current->parent->key) { current=current->parent;};
-                        current=current->parent;  //infine sale a destra
-                        return *this;
-		                   };
-            
-		               };
-                return *this;
-                }
-            };
-    //fine constiterator
     
+  
     
-    
-    //Metodi dell'albero
-    
-    const Constiterator cbegin() const { return Constiterator{first};}
-    const Constiterator cend() const { return Constiterator{nullptr};}
-    const Constiterator croot() const {return Constiterator{root};}
-    
+    Constiterator cbegin() const  { return Constiterator{first,*this};}
+    Constiterator cend() const { return Constiterator{nullptr,*this};}
+    Constiterator croot() const {return Constiterator{root,*this};}
+    Constiterator clast() const {return Constiterator{last,*this};}
 
     iterator find(const T& t) {
         Node* j{root};
@@ -420,7 +363,7 @@ class Tree<T,W,K>::iterator{
         K oper;
         null_object<T> static null;
         public:
-        iterator(Node* p, Tree<T,W,K>& t=null):
+        iterator(Node* p, const Tree<T,W,K>& t=null):
             current{p}, oper{t.oper} {}
         
         //iterator(Node* p):
@@ -432,6 +375,7 @@ class Tree<T,W,K>::iterator{
         
         
         iterator& operator++(){
+            
                 if(current->right!=nullptr){ //cerca se può scendere a destra
                     current=current->right;
                     if(current->left!=nullptr){
@@ -448,7 +392,7 @@ class Tree<T,W,K>::iterator{
                      
                      else {
                          //l'ultima condizione serve per evitare di proseguire se si arriva alla radice
-                        while(current->parent!=nullptr && greater(current->key  ,  current->parent->key)) { //in alternativa risale a sinistra
+                         while(current->parent!=nullptr && greater(current->key  ,  current->parent->key)) { //in alternativa risale a sinistra
                             current=current->parent;
                             };
                          if(current->parent!=nullptr){ //se siamo arrivati in un nodo diverso dalla radice allora va bene
@@ -456,6 +400,7 @@ class Tree<T,W,K>::iterator{
                              return *this;}
                              
                          else{ // se siamo qua allora siamo nella radice,questo vuol dire che è partito dal last
+                             
                              current = nullptr;
                              return *this;}
                         }
@@ -497,7 +442,7 @@ class Tree<T,W,K>::iterator{
         bool operator==(const iterator& b) const {return current==b.current;}
         bool operator!=(const iterator& b) const {return current!=b.current;}
         Node* node() const{return current;}
-        T& parent_key()  {
+        T& parent_key() const  {
             if(current->parent==nullptr) {cout<<"we are in the root"<<endl; return current->key;};
             return current->parent->key;}
     };
@@ -661,10 +606,10 @@ template<typename T,typename W, typename K>
 std::ostream& operator<<(std::ostream& os, const Tree<T,W,K>& l) {
     if (l.Size()==0) {cout<<"empty tree"<<endl; return os;}
     else {
-        typename Tree<T,W,K>::Constiterator j =l.cbegin();
+        typename Tree<T,W,K>::Constiterator j = l.cbegin();
     for(; j!=l.cend();++j){
         os <<"key: "<<*j<<"   value: " <<!j<<"      parent: "<<j.parent_key()<<endl;
-        }
+             }
         
 
     return os ;}
@@ -682,36 +627,6 @@ std::ostream& operator<<(std::ostream& os, const Tree<T,W,K>& l) {
 
 
 
-/*
-template <typename T, typename W, typename K>
-    bool operator==(const Tree<T,W,K>& A,const Tree<T,W,K>& B) {
-    if (A.Size()==0 and B.Size()==0) {return true;}
-    else {
-        typename Tree<T,W,K>::Constiterator j =B.cbegin();
-        typename Tree<T,W,K>::Constiterator i =A.cbegin();
-    while(j!=B.cend()){
-        if(j.node()->key != i.node()->key) {cout<<"key "<<j.node()->key<< " "<<i.node()->key<<endl;return false;};
-        if((j.node()->parent!=nullptr) and  (i.node()->parent!=nullptr)) {
-                if(j.node()->parent->key != i.node()->parent->key) 
-                    {if((j.node()->parent !=nullptr) and(i.node()->parent!=nullptr))
-                                                    cout<<"parent "<<j.node()->parent->key<< " "<<i.node()->parent->key<<endl;
-                                                    return false;};};
-         if((j.node()->left!=nullptr) and  (i.node()->left!=nullptr)){                                           
-        if(j.node()->left->key != i.node()->left->key)  {if((j.node()->left !=nullptr) and(i.node()->left!=nullptr))
-                                                    cout<<"left "<<j.node()->left->key<< " "<<i.node()->left->key<<endl;return false;}; };
-          if((j.node()->right!=nullptr) and  (i.node()->right!=nullptr)){                                          
-        if(j.node()->right->key != i.node()->right->key) {if((j.node()->right !=nullptr) and(i.node()->right!=nullptr))
-                                                    cout<<"left "<<j.node()->right->key<< " "<<i.node()->right->key<<endl;return false;}; };
-        if(B.cend()!=A.cend()) return false;
-                                                    
-        ++i;
-        ++j;
-        }
-      
-
-    return true ;}
-}
-*/
 
 
 
@@ -746,11 +661,30 @@ struct oper{ bool operator()(T a, T b) {return(a>b);}};
 int main() {
 
 try{
+       Tree<int,int> A;
+    for(unsigned int i=1 ; i<20;i++){
+        A.Insert(i,i);
+    }
+    cout<<"ECCO L'ALBERO A"<<endl<<endl;
+    cout<<A<<endl<<endl;
+    cout<<"------------------"<<endl;
     
-  oper<int> o;
-  Tree<int,int> A;
-  Tree<int,int,null_object<int>>::iterator i{A.First(),A};
-
+    
+    oper<int> o;
+    Tree<int,int,oper<int>> B{o};
+    B.Linked_insert(20);
+    
+   
+    
+  
+    
+    cout<<"ECCO L'ALBERO B:"<<endl<<endl;
+    cout<<B<<endl<<endl;
+    cout<<"XXXXXXXXXXXXX"<<endl;
+    B.info();
+    B.balance();
+    cout<<"ECCO L'ALBERO B bilanciato:"<<endl<<endl;
+    cout<<B<<endl<<endl;
     return 0;
 }
 
