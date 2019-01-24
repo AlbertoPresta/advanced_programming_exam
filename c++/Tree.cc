@@ -359,10 +359,11 @@ void Tree<T,W,K>::Insert(T k,W v)  {
 template<typename T,typename W,typename K>
 class Tree<T,W,K>::iterator{
         using Node = Tree<T,W,K>::Node;
+    protected:
         Node* current;
         K oper;
         null_object<T> static null;
-        public:
+    public:
         iterator(Node* p, const Tree<T,W,K>& t=null):
             current{p}, oper{t.oper} {}
         
