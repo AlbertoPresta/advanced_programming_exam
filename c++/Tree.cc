@@ -376,7 +376,6 @@ class Tree<T,W,K>::iterator{
         
         
         iterator& operator++(){
-            
                 if(current->right!=nullptr){ //cerca se può scendere a destra
                     current=current->right;
                     if(current->left!=nullptr){
@@ -387,7 +386,8 @@ class Tree<T,W,K>::iterator{
                     }
                 
                 else {
-                    if(this->less(current->key,current->parent->key) ){ //se può risale a destra
+                    if(current->parent==nullptr) {current=nullptr; return *this;};
+                    if(less(current->key,current->parent->key) ){ //se può risale a destra
                         current=current->parent;
                         return *this;}
                      
@@ -547,7 +547,6 @@ void Tree<T,W,K>::Balance() noexcept{
     iterator i{first,*this};
      
     for(unsigned int ii{1};ii<size_tree/2+1;ii++) ++i;   //cerca la mediana
-    cout<<"sono quaaaaaaaaaaaaaaaaaaaaaaaaaaa"<<*i<<endl;
     if(i.node()->parent!=root){ //fino al nodo sotto la root
         while (i.node()->parent!= root) {
             Node* m{i.node()};  //mediana
@@ -666,6 +665,7 @@ try{
     for(unsigned int i=1 ; i<20;i++){
         A.Insert(i,i);
     }
+    A.info();
     cout<<"ECCO L'ALBERO A"<<endl<<endl;
     cout<<A<<endl<<endl;
     cout<<"------------------"<<endl;
