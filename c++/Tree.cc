@@ -420,6 +420,7 @@ class Tree<T,W,K>::iterator{
                     }
                     
                 else {
+                    if(current->parent==nullptr) {current=nullptr; return *this;}
                     if(greater(current->key  ,  current->parent->key)) { //se può risale a destra
                         current=current->parent;
                         return *this;}
