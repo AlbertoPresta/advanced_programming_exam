@@ -1,26 +1,20 @@
 EXE = main
-CXX = c++
-CXXFLAGS =  -Wextra -Wall -std=c++11 -I include
+CXX = g++
+CXXFLAGS = -c -Wextra -Wall -std=c++11 -I include
 SRC = src/main.cc
 OBJ = $(SRC:.cc=.o)
 INC = include/Tree.h
 
+all:main
 
-all: $(EXE)
+$(EXE): main.o
+	$(CXX) main.o -o main
 
-.PHONY: all
+main.o: $(SRC)
+	$(CXX) src/main.cc $(CXXFLAGS) 
+
+main.o: include/Tree.h
 
 clean:
 	$(info clean up)
 	@rm -rf $(OBJ) $(EXE) src/*~ include/*~ *~ html latex
-
-.PHONY: clean
-
-%.o: %.cc 
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
-
-$(EXE): $(OBJ)
-	$(CXX) $^ -o $(EXE)
-
-main.o: include/Tree.h
-

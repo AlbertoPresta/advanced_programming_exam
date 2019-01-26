@@ -36,9 +36,10 @@ class Tree{
     Node* root;
     
     unsigned int size_tree; //grandezza dell'albero
-    K oper;
+  
     
     null_object<T> static null;
+     K oper;
     
 public:
     

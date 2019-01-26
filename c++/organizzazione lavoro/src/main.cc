@@ -10,7 +10,8 @@
 
 int main(){
     try{
-        Tree<int,int> A;
+        
+        Tree<int,int,null_object<int>> A{};
         cout<<"ECCO L'ALBERO A"<<endl<<endl;
         A.Linked_insert(20);
         A.info();
