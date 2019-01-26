@@ -35,9 +35,9 @@ public:
     iterator(Node* p):
     current{p}, oper{null} {}
     
-    bool less(T& a, T&b)  {return oper(a,b);}
-    bool equal(T& a, T&b) {if (!less(a,b) and !less(b,a)) return true; return false;}
-    bool greater(T& a, T&b) {if (!less(a,b) and !equal(a,b)) return true; return false;}
+    bool less(const T& a,const  T&b)  {return oper(a,b);}
+    bool equal(const T& a,const  T&b) {if (!less(a,b) and !less(b,a)) return true; return false;}
+    bool greater(const T& a,const T&b) {if (!less(a,b) and !equal(a,b)) return true; return false;}
     
     
     iterator& operator++(){
@@ -109,7 +109,7 @@ public:
     bool operator==(const iterator& b) const {return current==b.current;}
     bool operator!=(const iterator& b) const {return current!=b.current;}
     Node* node() const{return current;}
-    T& parent_key() const  {
+    const T& parent_key() const  {
         if(current->parent==nullptr) {cout<<"we are in the root"<<endl; return current->key;};
         return current->parent->key;}
 

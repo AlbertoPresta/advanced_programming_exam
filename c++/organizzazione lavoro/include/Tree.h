@@ -21,7 +21,7 @@ template<typename T,typename W, typename  K=null_object<T>>
 class Tree{
     
     struct Node{
-        T key;
+        const T key;
         W value;
         Node* left;
         Node* right;
