@@ -1,3 +1,4 @@
+
 /******************************************************************
  *
  *
@@ -84,7 +85,7 @@ public:
             node = node->right;
         return node;
     }
-   
+    
     Node* Root() const{return root;}
     unsigned int Size() const{return size_tree;}  //funzione per stampare la grandezza dell'albero
     
@@ -111,7 +112,7 @@ public:
         int m{9};
         Node* elem=new Node{j,j};first=elem; root=elem; size_tree=1;
         for(int i{n-1};i>0;i--) {elem=new Node{i,m,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
-        }
+    }
     
     //Metodo insert vero e proprio
     void insert(T k,W v);
@@ -125,10 +126,10 @@ public:
     iterator end() const  {return iterator{nullptr,*this}; }
     
     
-   
     
     
-   
+    
+    
     
     
     class Constiterator : public iterator {
@@ -170,7 +171,7 @@ public:
         iterator k{j,*this};
         return k;
     }
-   
+    
     
 private:
     //la funzione ctr_insert è chiamata dai metodi della copy-move semantics
@@ -310,7 +311,7 @@ public:
         
         
     }
-  
+    
     W& operator[]  (const T& k) noexcept {
         iterator j{find(k)};
         if(j!=end()) return !j;
@@ -319,10 +320,10 @@ public:
         return !q;
     }
     
-   
-   
-   
-
+    
+    
+    
+    
     //distrutore dell'albero
     ~Tree() {clear();}
     
@@ -372,7 +373,7 @@ public:
     current{p}, oper{t.oper} {}
     
     iterator(Node* p):
-        current{p}, oper{null} {}
+    current{p}, oper{null} {}
     
     bool less(T& a, T&b)  {return oper(a,b);}
     bool equal(T& a, T&b) {if (!less(a,b) and !less(b,a)) return true; return false;}
@@ -677,7 +678,7 @@ int main() {
         cout<<"ECCO L'ALBERO B[2]:"<<endl<<endl;
         cout<<B[2]<<endl<<endl;
         
-       // cout<<"q:   "<<q<<endl;
+        // cout<<"q:   "<<q<<endl;
         cout<<"XXXXXXXXXXXXX"<<endl;
         Tree<int,int,oper<int>>::iterator q = B.find(12);
         ++q;
