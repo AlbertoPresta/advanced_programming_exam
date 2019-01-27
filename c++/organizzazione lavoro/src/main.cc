@@ -63,67 +63,90 @@ int main(){
         A[21]; // first find is negative, but the second one is positive!
         cout<<"Should be the default value of integer (0): "<<A[21]<<endl;
         cout<<"size of the tree after using operator [ ]:  "<<A.Size()<<endl;
-         /*
-        ++p;
-        ++p;
-        cout<<*p<<endl;
-        --p;
-        cout<<*p<<endl;
-        cout<<"------------------"<<endl;
+        /*
+         NOW WE WANT TO CONTROL MOVE AND COPY SEMANTIC
+         */
+        cout<<"*********************MOVE AND COPY SEMANTIC********************"<<endl<<endl<<endl;
+        
+        cout<<"------COPY CONSTRUCTOR------"<<endl;
+        cout<<"Tree<int,int> B{A}"<<endl<<endl;
+        Tree<int,int> B{A}; // should be a deep copy
+        cout<<"Tree B"<<endl;
+        cout<<B<<endl<<endl;
+        cout<<"Tree A"<<endl;
+        cout<<B<<endl<<endl;
+        cout<< "now I try to change B, A should'change"<<endl;
+        B.insert(23,23);
+        //verification that B is a deep copy
+        if (B.Size()!=A.Size()) cout<<"Copy constructor works well! "<<endl<<endl;
+        else cout<<" we have a problem!"<<endl;
+        cout<<"------COPY ASSIGNMENT------"<<endl;
+        Tree<int,int> C;
+        for (int i=30; i<=45; i++) C.insert(i,i);
+        cout<<"Tree C before the copy assignment: "<<endl<<endl;
+        cout<<C<<endl<<endl<<endl;
+        cout<<"C = A"<<endl<<endl;;
+        C = A; // now C should be equal to A
+        cout<<"now C should be equal to A! "<<endl;
+        cout<<"Tree C after the copy assignment: "<<endl<<endl;
+        cout<<C<<endl;
+        cout<<"Tree A after copy assignment ( it is the same tree). "<<endl<<endl;
+        cout<<A<<endl;
+        cout<<"------MOVE CONSTRUCTOR------"<<endl;
+        cout<<"Tree<int,int> D{std::move(A)};"<<endl<<endl;
+        Tree<int,int> D{std::move(A)};
+        cout<<"Tree D  (should be equal to A)"<<endl<<endl;
+        cout<<D<<endl;
+        if (A.Size()==0)cout<<" A is an empty Tree now, so move constructor works well!"<<endl<<endl;
+        else cout<<"We have a problem!"<<endl;
+         cout<<"------MOVE ASSIGNMENT------"<<endl;
+        Tree<int,int> E;
+        for (int i=30; i<=45; i++) E.insert(i,i);
+        cout<<"Tree E before move assignment!"<<endl<<endl;
+        cout<<E<<endl<<endl;
+        cout<<"E = std::move(D)"<<endl;
+        E = std::move(D);
+        cout<<"Tree E after move assignment!"<<endl<<endl;
+        cout<<E<<endl<<endl;
+        if (D.Size()==0)cout<<"D is an empty Tree now, so move semantic works well!"<<endl<<endl;
+        else cout<<"We have a problem!"<<endl;
+        cout<<endl<<endl<<endl;
+        /*
+         Now we want to test the clear method, which should clear the content of the tree
+         */
+        cout<<"***********************CLEAR**************************"<<endl<<endl<<endl;
+        Tree<int,int> F{};
+        for (unsigned int i = 1; i<30;i++) F.insert(i,i);
+        cout<<"Tree F: "<<endl<<endl;
+        cout<<F<<endl<<endl;
+        cout<<"F.clear()"<<endl<<endl;
+        F.clear();
+        if(F.Size()==0){cout<<"F is an empy tree now!"<<endl<<endl;}
+        else cout<<"clear did not work well"<<endl<<endl;
+        cout<<endl<<endl<<endl;
+        cout<<"***************** Tree with reverse relation of order***************"<<endl<<endl;
+        /*
+         now we want initialize tree using the struct oper, which creates tree following the oppposite relation
+         of order requested by the exercise
+         */
         
         oper<int> o;
-        Tree<int,int,oper<int>> B{o};
-        B.Linked_insert(20);
-        cout<<"ALBERO B CON LINKED INSERT"<<endl;
-        cout<<B<<endl;
-        cout<<"PROVO PARENTESI []"<<endl;
-        cout<<B[29]<<endl;
+        cout<<"Tree<int,int,oper<int>> G{o};"<<endl<<endl;
+        Tree<int,int,oper<int>> G{o};
+        for (int i = 1; i<=20;i++) G.insert(i,i);
+        cout<<"now the first should be equal to 20!!"<<endl;
+        G.info();
+        cout<<"ECCO L'ALBERO G"<<endl<<endl;
+        cout<<G<<endl;
+        /*
+         last thing that we test is the second method of balance
+         */
+        cout<<"*****************************************FAST_BALANCE***************"<<endl;
+        cout<<"G.Fast_Balance();"<<endl<<endl;
+        G.Fast_Balance();
+        cout<<G<<endl;
         
         
-        
-        
-        
-        // cout<<"q:   "<<q<<endl;
-        cout<<"XXXXXXXXXXXXX"<<endl;
-        Tree<int,int,oper<int>>::iterator q = B.find(12);
-        ++q;
-        B.info();
-        B.Fast_Balance();
-        cout<<"ECCO L'ALBERO B bilanciato:"<<endl<<endl;
-        cout<<B<<endl<<endl;
-        
-        
-        cout<<"+++++++++++++COPY SEMANTIC+++++++"<<endl;
-        cout<<"copy constructor"<<endl;
-        Tree<int,int,oper<int>> C{B};
-        cout<<"albero C"<<endl;
-        cout<<C<<endl;
-        cout<<"albero B"<<endl;
-        cout<<B<<endl;
-        cout<<"copy assignment"<<endl;
-        Tree<int,int,oper<int>> D = C;
-        cout<<"albero C"<<endl;
-        cout<<C<<endl;
-        cout<<"albero D"<<endl;
-        cout<<D<<endl;
-        cout<<"-------------MOVESEMANTIC----------"<<endl;
-        cout<<"move constructor"<<endl;
-        Tree<int,int,oper<int>> E{std::move(D)};
-        cout<<"albero E"<<endl;
-        cout<<E<<endl;
-        cout<<"albero D"<<endl;
-        cout<<D<<endl;
-        D.insert(9,9);
-        D.insert(3,9);
-        D.insert(12,9);
-        cout<<D<<endl;
-        cout<<"move assigment"<<endl;
-        B=std::move(D);
-        cout<<"albero B"<<endl;
-        cout<<B<<endl;
-        cout<<"albero D"<<endl;
-        cout<<D<<endl;
-       */
     return 0;
          
     }

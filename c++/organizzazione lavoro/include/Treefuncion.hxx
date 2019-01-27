@@ -36,7 +36,11 @@ unsigned int Tree<T,W,K>::Size() const{return size_tree;}
 
 
 template<typename T,typename W,typename K>
-void Tree<T,W,K>::info() const{cout<<"   root "<<root->key<<"    size "<<size_tree<<endl;}
+void Tree<T,W,K>::info() const{
+    if (size_tree==0){cout<<"empty tree"<<endl;};
+    cout<<"   root "<<root->key<<"   first "<<first->key<<"    size "<<size_tree<<endl;
+    
+}
  
 template<typename T,typename W,typename K>
 void Tree<T,W,K>::insert(T k,W v)  {
