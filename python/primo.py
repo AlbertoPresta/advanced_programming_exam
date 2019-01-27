@@ -30,15 +30,26 @@ import datetime  # use this module to deal with dates:  https://docs.python.org/
 from collections import OrderedDict
 
 class PostcardList:
-            
+       """
+       class to read/write postcards frome external files provided by prof.Sartori
+       """
     def __init__(self):
+        # file name
         self._file = ""
+        # list of postcard
         self._postcards = []
+        # dictionary with  date
         self._date = {}
+        # dictionary with senders
         self._from= {}
+        # dictionary with receivers
         self._to = {}
 
     def readFile(self,file_name):
+        """
+         it sets a new file and it parse all postcards from it
+         file_name is the name of the new file
+        """
         self._file=file_name
         with open(file_name,'r') as f:
             for i in f:
@@ -47,6 +58,9 @@ class PostcardList:
         self.parsePostcards()
                 
     def parsePostcards(self):
+        """
+         it updates all the dictionaries of the new file
+        """
         for i in range(len(self._postcards)):
             date=self._postcards[i][5:15]
             date = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -82,15 +96,25 @@ class PostcardList:
 
 
     def writeFile(self,file_name):
+        """
+            Write all postcards to a file, where the file_name is the file to
+            be written
+        """
         with open(file_name,'w') as f:
             for i in self._postcards:
                 f.write(i)
         f.close()
 
     def updateFile(self):
+        """
+        as write but appending to self._file
+        """
         self.writeFile(self._file)
 
     def updateLists(self,file_name):
+        """
+        as read but appending to self._postcards
+        """
 
         with open(file_name,'r') as f:
             for i in f:
@@ -99,9 +123,15 @@ class PostcardList:
         self.parsePostcards()
         
     def getNumberOfPostcards(self):
+        """
+        it returns number of postcards
+        """
         return len(self._postcards)
 
     def getPostcardsByDateRange(self,date_range):
+        """
+        It returns a list with all postcards in a given data_range
+        """
         ord_keys=sorted(list(self._date.keys()))
         
         date_in_range=[]
@@ -112,6 +142,9 @@ class PostcardList:
         return date_in_range
 
     def getPostcardsBySender(self, sender):
+        """
+        it returns a list with all poscard of a given sender
+        """
         sender_list=[]
         if sender not in self._from:
             return []
@@ -121,6 +154,9 @@ class PostcardList:
         return sender_list
 
     def getPostcardsByReceiver(self, receiver):
+        """
+        it returns a list with all poscard of a given receiver
+        """
         receiver_list=[]
         if receiver not in self._to:
             return []
