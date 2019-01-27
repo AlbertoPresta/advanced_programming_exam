@@ -1,3 +1,16 @@
+/*
+ 
+ Advanced programming project
+ authors: Alberto Presta and Andrea Gasparin
+ Date: 27-01-2019
+ 
+ In this first file there are the declaration (a part from struct node which is fully implemented here) of the class Tree and all the methods which characterice our project.
+ */
+
+
+
+
+
 #include<iostream>
 
 
@@ -8,9 +21,17 @@ using std::string;
 using std::cout;
 using std::endl;
 
+
+
+/*
+ class which Error handling in case there is an insertion of an already present key. It is simply an empty struct
+ */
 class ex_key {};
 
 
+/*
+ struct which reperesents the default relation of order
+*/
 template<typename T>
 struct null_object{ bool operator()(const T& a, const T& b) const {return(a<b);}};
 
@@ -108,7 +129,7 @@ public:
 private:
     void recursive_clear(Node* n) noexcept;
     
-    void rec_balance(unsigned int s, Tree<T,W,K>& b, Tree<T,W,K>::iterator m, int lun) noexcept;
+    void rec_balance( Tree<T,W,K>& b, Tree<T,W,K>::iterator m, int lun) noexcept;
 
     void ctr_insert( Node* n);
     
