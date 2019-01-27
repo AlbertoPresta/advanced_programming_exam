@@ -2,15 +2,34 @@
 #include"Tree.h"
 
 
-
 /*
- funzioni:
+ Advanced programming project
+ Authors: Alberto Presta and Andrea Gasparin
+ Date: 27-01-2019
+
+
+
+
+
+ functions implemented in this file:
  Bal_reisert
  left_branch_
  right_branch
  rec_Brance
  Fast_Balance
-*/
+
+
+
+
+
+
+ fast balance balances the tree, finding the median, deattaching and reinserting below it all branches up to the root.
+ It proceeds recursively on left and right subtrees median till no splitting is no longer possible
+ 
+ The fast balance function, has been implemented to perform the balance of the tree without creating a new tree and reinserting all nodes in it.
+ Tests proved that fast balance fails for trees bigger than 100000 with a 4G ram machine and 200000 with a 8Gram machine, where fast balance has succesfuly performed up to 9*E^7 on a 4Gram machine and up to  500000000 on a 8Gram machine.
+ Morover, fast balance, even on trees for wich the regular balance worked has shown to be approximatively twice faster than regualar balance
+ */
 
 template<typename T,typename W,typename K>
 void Tree<T,W,K>::Fast_Balance() noexcept{
