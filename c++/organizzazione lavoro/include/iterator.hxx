@@ -26,7 +26,7 @@ class Tree<T,W,K>::iterator{
     using Node = Tree<T,W,K>::Node;
 protected:
     Node* current;
-    K oper;
+    const K oper;
     null_object<T> static null;
 public:
     iterator(Node* p, const  Tree<T,W,K>& t=null): //const
@@ -35,9 +35,9 @@ public:
     iterator(Node* p):
     current{p}, oper{null} {}
     
-    bool less(const T& a,const  T&b)  {return oper(a,b);}
-    bool equal(const T& a,const  T&b) {if (!less(a,b) and !less(b,a)) return true; return false;}
-    bool greater(const T& a,const T&b) {if (!less(a,b) and !equal(a,b)) return true; return false;}
+    bool less(const T& a,const  T&b) const  {return oper(a,b);}
+    bool equal(const T& a,const  T&b) const  {if (!less(a,b) and !less(b,a)) return true; return false;}
+    bool greater(const T& a,const T&b) const  {if (!less(a,b) and !equal(a,b)) return true; return false;}
     
     
     iterator& operator++(){
@@ -150,11 +150,11 @@ template<typename T,typename W,typename K>
  typename Tree<T,W,K>::Constiterator Tree<T,W,K>::cend() const {return Constiterator{nullptr,*this};}
 
 template<typename T,typename W,typename K>
-typename Tree<T,W,K>::iterator Tree<T,W,K>::find (const T& t) {
+typename Tree<T,W,K>::iterator Tree<T,W,K>::find (const T& t) const {
          Node* j{root};
          int i{0};
          while(j!=nullptr){i++;
-            if(equal(j->key,t)){  cout<<"key found!   "<<i<<endl; iterator k{j,*this}; return k;}
+             if(equal(j->key,t)){ cout<<"key found! "<<endl;cout<<"number of iterations: "<<i<<endl; iterator k{j,*this}; return k;}
             
             else{
                 if(greater(j->key,t)){j=j->left;}

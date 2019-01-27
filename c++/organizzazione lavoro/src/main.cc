@@ -4,25 +4,66 @@
 
 #include <cstdlib>
 
-
+/*
+ In this main we want to test al features of our Tree
+ 
+ */
 
 
 
 int main(){
     try{
-        
-        Tree<int,int,null_object<int>> A{};
-        cout<<"ECCO L'ALBERO A"<<endl<<endl;
-        A.Linked_insert(20);
+        /*
+         Constructor of the Tree--> it should create an empty tree
+        */
+        Tree<int,int> A{};
+        cout<<"it should print empty tree:    "<<A<<endl;
+        /*
+         insert method
+         */
+        for (int i = 1; i<=20;i++) A.insert(i,i);
+        cout<<"Now the tree should have 20 nodes, the root should be key = 1, as well as the first"<<endl;
         A.info();
         cout<<"ECCO L'ALBERO A"<<endl<<endl;
-        cout<<A<<endl<<endl;
+        cout<<A<<endl;
+        
+        /*
+         method balance--> we print alse the key of the parent in order to find out if the tree is balanced
+         */
         A.balance();
         cout<<"---------ALBERO A BILANCIATO---------"<<endl;
         cout<<A<<endl<<endl;
         cout<<"------------------"<<endl;
-        Tree<int,int>::iterator p{A.begin()};
+        /*
+         now we initialize an iterator with the proper constructor
+         */
+        Tree<int,int>::iterator p{A.getfirst(),A};
+        cout<<"now it should be print 1:  "<<endl;
+        
         cout<<*p<<endl;
+        /*
+         testing funtion find both when we find the key and when we dont' find the key.
+         Also we control if operators * and ! work
+         */
+         Tree<int,int>::iterator q = A.find(12);
+        
+        cout<<"value of the key found (it should be 12 ):   "<<*q<<endl;
+        cout<<"values associated with the key:   "<<!q<<endl;
+        cout<<"now we test the case when there isn't the key. "<<endl;
+        A.find(1000);
+       
+        /*
+         Test the operator [ ]
+         */
+        cout<<"OBS: operator [] print also what is written in function find"<<endl;
+        for (int i =1; i<10; i++)
+            cout<<"value associated to the key "<<i<<": "<< A[i] <<endl;
+        cout<<"case when the key is not present"<<endl;
+        cout<<"size of the tree before using operator [ ]:  "<<A.Size()<<endl;
+        A[21]; // first find is negative, but the second one is positive!
+        cout<<"Should be the default value of integer (0): "<<A[21]<<endl;
+        cout<<"size of the tree after using operator [ ]:  "<<A.Size()<<endl;
+         /*
         ++p;
         ++p;
         cout<<*p<<endl;
@@ -82,8 +123,9 @@ int main(){
         cout<<B<<endl;
         cout<<"albero D"<<endl;
         cout<<D<<endl;
-       
+       */
     return 0;
+         
     }
 
 catch (const ex_key) {cout<<"exception has been thrown "<<endl;return 1;}

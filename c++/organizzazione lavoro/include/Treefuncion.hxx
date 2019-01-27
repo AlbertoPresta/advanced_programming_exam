@@ -1,6 +1,10 @@
-#include<iostream>
 #include"Tree.h"
-
+#include<iostream>
+#include<cmath>
+#include<ctime>
+#include<fstream>
+#include<sstream>
+#include <map>
 /*
  funzioni:
  getlast
@@ -12,7 +16,7 @@
  copy-move semantic
  rec_balance and balance
  clear and recursive_clear
- 
+ timer
  
 
 
@@ -72,7 +76,7 @@ void Tree<T,W,K>::Linked_insert(int n) {
     else{
         int j{1};
         Node* elem=new Node{j,j};first=elem ; root=elem;   size_tree=1;
-        for(int i{2};i<n;i++) {elem=new Node{i,j,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
+        for(int i{2};i<=n;i++) {elem=new Node{i,j,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
     }
 }
 
@@ -92,7 +96,7 @@ void Tree<T,W,K>::ctr_insert(Node* n) {
 //-------------COPY SEMANTIC---------------------------//
 // copy constructor
 template<typename T,typename W,typename K>
-Tree<T,W,K>::Tree(const Tree<T,W,K>& t):first{nullptr}, root {nullptr},size_tree{0} {
+Tree<T,W,K>::Tree(const Tree<T,W,K>& t):first{nullptr}, root {nullptr},size_tree{0},oper{t.oper} {
     ctr_insert(t.root);
 }
 
@@ -108,7 +112,7 @@ Tree<T,W,K>& Tree<T,W,K>::operator=(const Tree<T,W,K>& t) {
 //--------------MOVE SEMANTIC-----------------------//
 //move constructor
 template<typename T,typename W,typename K>
-Tree<T,W,K>::Tree(Tree<T,W,K>&& t) : first{t.first}, root {t.root}, size_tree{t.size_tree}  {
+Tree<T,W,K>::Tree(Tree<T,W,K>&& t) : first{t.first}, root {t.root}, size_tree{t.size_tree}, oper{t.oper}  {
     t.root=nullptr;
     t.first=nullptr;
     t.size_tree=0;
@@ -196,6 +200,62 @@ W& Tree<T,W,K>::operator[]  (const T& k)  {
     return !q;
 }
 
+template<typename K>
+void timer(Tree<int,int,K>& A){
+    std::map<int ,int> name_map;
+    clock_t t1,t2,t3,t4;
+    string file_name="test_data_iter.txt";
+    std::fstream f{file_name,f.app};
+    f<<"--------------------TIME IN SECONDS--------------------"<<endl<<endl;
+    f<<"Tree_size         find       balance        new find         log(N)         find_map"<< endl;
+    f.close();
+    long int size;
+    for (int i{4};i<7;i++) {
+        cout<<"*********************************************************"<<endl;
+        cout<<"---------siamo alla potenza i: "<< i << "cioè: " << pow(10,i)<<endl;
+        for (int h{1};h<10;h=h+1)
+        {
+            
+            size=h*pow(10,i);
+            A.Linked_insert(size);
+            cout<<"size"<<endl;
+            cout<<A.Size()<<endl;
+            t1=clock();
+            if(A.getlast()->key == size) A.find(size);
+            else A.find(1);             // find!
+            t1=clock()-t1;
+            
+            // balance
+            t2=clock();
+            if(size<=100000) A.balance();
+            else A.Fast_Balance();
+            t2=clock()-t2;
+            cout<<"effettuato balance"<<endl;
+            // time after balance
+            t3=clock();
+            A.find(size-1);
+            t3=clock()-t3;
+            
+            // ora tocca alla mappa
+            for (int t = 1; t<=size; t++){
+                name_map.insert(std::pair<int,int>(t,t));
+            }
+            t4 = clock();
+            name_map.find(size);
+            t4 = clock() - t4;
+            
+            f.open(file_name,f.app);
+            
+            
+            f<<size<<"          "<<((float)t1)/CLOCKS_PER_SEC<<"          "<<((float)t2)/CLOCKS_PER_SEC<<"          "
+            <<((float)t3)/CLOCKS_PER_SEC<<"      "<<log2(size)<<"         "<<((float)t4)/CLOCKS_PER_SEC<<endl;
+            f.close();
+            
+            
+        }
+        cout<<"****************************************"<<endl;
+    }
+}
 
 
 

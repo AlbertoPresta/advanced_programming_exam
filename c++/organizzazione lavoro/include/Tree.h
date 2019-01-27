@@ -12,10 +12,10 @@ class ex_key {};
 
 
 template<typename T>
-struct null_object{ bool operator()(T a, T b) {return(a<b);}};
+struct null_object{ bool operator()(const T& a, const T& b) const {return(a<b);}};
 
 template<typename T>
-struct oper{ bool operator()(T a, T b) {return(a>b);}};
+struct oper{ bool operator()(const T& a, const T& b) const {return(a>b);}};
 
 template<typename T,typename W, typename  K=null_object<T>>
 class Tree{
@@ -36,15 +36,14 @@ class Tree{
     Node* root;
     
     unsigned int size_tree; //grandezza dell'albero
-  
+    const  K oper;
+    const null_object<T> static null;
     
-    null_object<T> static null;
-     K oper;
     
 public:
     
     Node* Root() const{return root;}
-    
+    Node* getfirst() const{return first;}
     // metodo che restituisce node* al nodo più grande
     Node* getlast() const;  
     
@@ -52,15 +51,15 @@ public:
    
     void info() const;
     
-    Tree(K& o):
+    Tree( const K& o):
     root{nullptr},size_tree{0},oper{o} {}
     
     Tree():
     root{nullptr},size_tree{0},oper{null} {}
     
-    bool less(const T& a,const T&b)  {return oper(a,b);}
-    bool equal(const T& a,const T&b) {if (!less(a,b) and !less(b,a)) return true; return false;}
-    bool greater(const T& a,const T&b) {if (!less(a,b) and !equal(a,b)) return true; return false;}
+    bool less(const T& a,const T&b) const   {return oper(a,b);}
+    bool equal(const T& a,const T&b) const {if (!less(a,b) and !less(b,a)) return true; return false;}
+    bool greater(const T& a,const T&b) const  {if (!less(a,b) and !equal(a,b)) return true; return false;}
     
 	void insert(T k, W v);
     
@@ -83,7 +82,7 @@ public:
 	 //Constiterator croot() const;
 
      
-	 iterator find(const T& t);
+	 iterator find(const T& t) const;
 
      
     
