@@ -5,6 +5,13 @@
 #include <cstdlib>
 
 
+/*
+ Antother struct which represents the opposite relation of order respect than the default one
+ */
+template<typename T>
+struct oper{ bool operator()(const T& a, const T& b) const {return(a>b);}};
+
+
 int main(){
     try{
         //oper<int> o;
@@ -13,7 +20,9 @@ int main(){
     timer(A);
     cout<<"fine del timing"<<endl;
 	
-    
+        
+    oper<int> o;
+    Tree<int,int,oper<int>> B{o};
         
     return 0;
     }

@@ -4,7 +4,7 @@
  authors: Alberto Presta and Andrea Gasparin
  Date: 27-01-2019
  
- In this first file there are the declaration (a part from struct node which is fully implemented here) of the class Tree and all the methods which characterice our project.
+ In this first file there are the declaration (a part from struct node which is fully implemented here) of the class Tree and all the methods which characterizes our project.
  */
 
 
@@ -35,12 +35,16 @@ class ex_key {};
 template<typename T>
 struct null_object{ bool operator()(const T& a, const T& b) const {return(a<b);}};
 
-template<typename T>
-struct oper{ bool operator()(const T& a, const T& b) const {return(a>b);}};
+
+/* start of the class Tree
+ 
+ */
 
 template<typename T,typename W, typename  K=null_object<T>>
 class Tree{
-    
+    /*declaration and implementation of the struct node
+     It simply contains the data types, constructor and destructor
+     */
     struct Node{
         const T key;
         W value;
@@ -52,26 +56,31 @@ class Tree{
         ~Node() {left=nullptr;right=nullptr;parent=nullptr;}
     };
     
-    //variabili dell'albero
-    Node* first;
-    Node* root;
+    //tree varaibles
+    Node* first; //first node
+    Node* root; // root node
     
-    unsigned int size_tree; //grandezza dell'albero
-    const  K oper;
-    const null_object<T> static null;
+    
+    unsigned int size_tree; // size of the tree
+    const  K oper;   // operation of the tree
+    const null_object<T> static null; // inizialization of the a variable null_object
     
     
 public:
-    
-    Node* Root() const{return root;}
-    Node* getfirst() const{return first;}
-    // metodo che restituisce node* al nodo più grande
-    Node* getlast() const;  
-    
-    unsigned int Size() const; //funzione per stampare la grandezza dell'albero
+     /*
+      methods of the class tree: described in the other files
+      
+      */
+    Node* Root() const{return root;}   // it returns the root
+    Node* getfirst() const{return first;} // it returns the first
    
-    void info() const;
+    Node* getlast() const;  // it returnas the node with the greatest key
     
+    unsigned int Size() const; //it returns the size of the tree
+   
+    void info() const; // it returns the main info of the tree
+    
+     // contructors of the tree
     Tree( const K& o):
     root{nullptr},size_tree{0},oper{o} {}
     
@@ -84,13 +93,13 @@ public:
     
 	void insert(T k, W v);
     
-	// inizio delle dichiarazioni degli iteratori!
+	// iterators
     class iterator;
 
 	iterator begin() const ;
 	iterator end() const ;
    
-    //iterator root();
+    
 
 	 //inizio dichiarazione constiterator
     
@@ -100,14 +109,17 @@ public:
 
      Constiterator cbegin() const;
 	 Constiterator cend() const;
-	 //Constiterator croot() const;
+	
 
      
 	 iterator find(const T& t) const;
 
      
     
-	 //inizio move and copy semantic
+	 
+    /*
+     copy and move semantic
+     */
 	 
 	 Tree(const Tree<T,W,K>& t);
 	Tree& operator=(const Tree<T,W,K>& t);
@@ -115,16 +127,32 @@ public:
     
 	Tree& operator=(Tree<T,W,K>&& t);
 	
+    /*
+     clear method
+     */
 	void clear() noexcept;
 	
-    ~Tree() {clear();};   //RIMETTERE CLEAR ASSOLUTAMENTE!!!!
+    /*
+     destructor
+     */
+    ~Tree() {clear();};
     
-	
+	/*
+     method balance --> it calls rec_balance
+     */
 	void balance() noexcept;
 	
     void Linked_insert(int n);
+    /*
+     second method of balance--> it calls Rec_Balance, left_branch_deattaching ,right_branch_deattaching and Bal_reinsert
+     */
     void Fast_Balance() noexcept;
+    
+    
     W& operator[]  (const T& k) ;
+    const W& operator[]  (const T& k) const ;
+    
+    
     
 private:
     void recursive_clear(Node* n) noexcept;
@@ -146,7 +174,9 @@ private:
 
 
 
-
+/*
+ overloading of the operator <<
+ */
 template<typename T,typename W, typename K>
 std::ostream& operator<<(std::ostream& os, const Tree<T,W,K>& l) {
     if (l.Size()==0) {cout<<"empty tree"<<endl; return os;}

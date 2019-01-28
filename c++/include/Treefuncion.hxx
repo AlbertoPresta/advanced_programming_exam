@@ -56,7 +56,7 @@ void Tree<T,W,K>::info() const{
  insert(): it iserts a new node in the tree:
  First of all, if the size of the tree is equal to 0, it inserts the root
  Otherwise we pass through the tree with a while loop following the relation of order which characterizes the tree.
- At the end of the while loop we have arrived in the right leaf where to insert the new node and then we insert it in the right place, with the last if (it depends on the key).
+ At the end of the while loop we have arrived in the right leaf where to insert the new node and then we insert it in the right place, with the last if branch (it depends on the key).
  If we insert a key which is already present, we throw an exception
 */
 template<typename T,typename W,typename K>
@@ -94,14 +94,14 @@ void Tree<T,W,K>::insert(T k,W v)  {
 template<typename T,typename W,typename K>
 void Tree<T,W,K>::Linked_insert(int n) {
     if (size_tree!=0){ return;};
-    if((1<2)!=less(1,2)){    // caso in cui non abbiamo un
+    if((1<2)!=less(1,2)){    // if we have oper = oper<int>
         int j{n};
         int m{9};
         Node* elem=new Node{j,j};first=elem; root=elem; size_tree=1;
         for(int i{n-1};i>0;i--) {elem=new Node{i,m,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
         
     }
-    else{
+    else{  // case where oper = null_object<int>
         int j{1};
         Node* elem=new Node{j,j};first=elem ; root=elem;   size_tree=1;
         for(int i{2};i<=n;i++) {elem=new Node{i,j,nullptr,nullptr,elem};elem->parent->right=elem;size_tree++;};
@@ -137,7 +137,7 @@ typename Tree<T,W,K>::iterator Tree<T,W,K>::find (const T& t) const {
 /*
  ctr_insert(Node* n): it is a private method which we use in the copy semantic:
  it is recursive and we use it to do a deep copy of a tree.
- First of all it insert the node in the new tree calling the function insert
+ First of all it inserts the node in the new tree calling the function insert
  Then if the node received in input is a leaf (no childred),  it returns nothing.
  Otherwise if the left son is different from the nullptr it calls itself with the input n->left.
  it does the same thing if the right son is different from nullptr
@@ -153,7 +153,7 @@ void Tree<T,W,K>::ctr_insert(Node* n) {
 //--------------------------------------------COPY SEMANTIC--------------------------------------------------------//
 /* copy constructor
  Copy constructor initializes a new tree from another one. It is built to be a deep copy, so at the end the two trees
- are totally independent.
+ will be totally independent.
  It initializes the data tipes of the copy as first{nullptr}, root {nullptr},size_tree{0},oper{t.oper} and then it calls
  ctr_insert to fill the new tree.
  Obviously the input is const because we don't change it.
@@ -166,7 +166,7 @@ Tree<T,W,K>::Tree(const Tree<T,W,K>& t):first{nullptr}, root {nullptr},size_tree
 
 /*copy assignment
  this is the overloading of the operator = for the copy assignment (it creates a deep copy)
- First of all it calls the method cleal which wipes out the content of the tree.
+ First of all it calls the method clear which wipes out the content of the tree.
  then it does the copy with the function ctr_isert(t.root) and it returns the new tree.
  Obviously the input is const because we don't change it.
 */
@@ -211,20 +211,19 @@ Tree<T,W,K>& Tree<T,W,K>::operator=(Tree<T,W,K>&& t) {
 
 //--------------------BALANCE OF THE TREE-------------------------
 /*
- Probably it is the most interesting function of the project,because thanks to this we can pass from a totally unbalanced (and useless) tree
- to a balance tree.
+ Probably it is the most interesting function of the project,because thanks to this we can pass from a totally unbalanced (and useless) tree to a balanced tree.
  -------------------------------------------------------balance()-------------------------------------------
  First of all we call the function balance.
- in the function balance we initialize an  empty tree which will be our future balanced tree (we will do a move).
- Then we initialize an iterator i which arrives to the median of the tree with the for loop.
+ in the function balance we initialize an  empty tree which will be our future balanced tree (we will do a move assignment).
+ Then we initialize an iterator i  which arrives to the median of the tree with the for loop.
  the we call rec_balance, which is the recursive_function which builds our tree
  
- --------------------------------------------------------rec_balance(Tree<T,W,K>& b, iterator m, int lun)---------------------------------------------------------
+ ---------------------------------------------------rec_balance(Tree<T,W,K>& b, iterator m, int lun)-----------------------------------------------------
  rec_balance is private and it receives in input following things:
- - the tree which will be the balance tree.
- - an iterator m which points to the median nodes
- - an integer which represents the size where to look for the following median
- firts of all  rec_balance inserts the median node (given in input thanks to the iterator) in the balance tree
+ - the tree which will be the balanced tree.
+ - an iterator m which points to the median node.
+ - an integer which represents the size where to look for the following median.
+ firts of all  rec_balance inserts the median node (given in input thanks to the iterator) in the tree b given in input
  If we have that b.size is equal to size_tree, it means that we have inserted all the nodes.
  Otherwise we initialize two different integers:
  - int_l represents the number of nodes from the first node to the median given in input
@@ -264,7 +263,7 @@ void Tree<T,W,K>::balance() noexcept {
     Tree<T,W,K> b{this->oper};  //creation of the tree
     iterator i{first,*this};
     for(unsigned int ii{1};ii<size_tree/2+1;ii++) ++i;  // we arrive at the median of the tree
-    rec_balance(b,i,size_tree);
+    rec_balance(b,i,size_tree);  // call of the recursive function 
     *this=std::move(b);}  // move semantic
 
 
@@ -305,6 +304,7 @@ void Tree<T,W,K>::clear() noexcept{
 /*
  This functions returns a  reference to the value associated to the key k. If the key is not present, a new node with key k is allocated having the value value_type{}.
  */
+
 template<typename T,typename W,typename K>
 W& Tree<T,W,K>::operator[]  (const T& k)  {
     iterator j{find(k)};
@@ -314,12 +314,26 @@ W& Tree<T,W,K>::operator[]  (const T& k)  {
     return !q;
 }
 
+/*
+ 
+ this method is useful if we deal with costant tree because they don't touch the tree
+ */
+template<typename T,typename W,typename K>
+const  W& Tree<T,W,K>::operator[] (const T& k) const  {
+    Node* p = find(k).node();
+    Constiterator m{p,*this};
+    
+    if(m==cend()){throw;};
+    
+    return !m;
+    }
+
 
 
 /*
  This function is used to write the performance (in terms of time) in a file txt.
  It accepts only a tree<int,int,k> (key and value are integer).
- With two nested for loops we evaluate performance of tree of different size (for 10^5 to 9*10^6)
+ With two nested for loops we evaluate performance of tree of different size (from 10^4 to 9*10^6)
  We evaluate time for find before balance and find after balance.
  Then we also do a test for std::map
  
@@ -336,7 +350,7 @@ void timer(Tree<int,int,K>& A){
     f<<"Tree_size         find       balance        new find         log(N)         find_map"<< endl;
     f.close();
     long int size;
-    for (int i{5};i<7;i++) {
+    for (int i{4};i<7;i++) {
         cout<<"*********************************************************"<<endl;
         cout<<"---------siamo alla potenza i: "<< i << "cioè: " << pow(10,i)<<endl;
         for (int h{1};h<10;h=h+1)

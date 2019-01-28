@@ -10,6 +10,12 @@
  */
 
 
+/*
+ Antother struct which represents the opposite relation of order respect than the default one
+ */
+template<typename T>
+struct oper{ bool operator()(const T& a, const T& b) const {return(a>b);}};
+
 
 int main(){
     try{
@@ -46,6 +52,10 @@ int main(){
          Also we control if operators * and ! work
          */
          Tree<int,int>::iterator q = A.find(12);
+        /*
+         creation of an iterator pointed to the root.
+         */
+        Tree<int,int>::iterator z{A.Root()};
         
         cout<<"value of the key found (it should be 12 ):   "<<*q<<endl;
         cout<<"values associated with the key:   "<<!q<<endl;
@@ -55,7 +65,7 @@ int main(){
         /*
          Test the operator [ ]
          */
-        cout<<"OBS: operator [] print also what is written in function find"<<endl;
+       
         for (int i =1; i<10; i++)
             cout<<"value associated to the key "<<i<<": "<< A[i] <<endl;
         cout<<"case when the key is not present"<<endl;

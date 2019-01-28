@@ -2,11 +2,13 @@
 #include<iostream>
 
 /*
+ Advanced programming project
+ Date: 29-01-2019
  Authors: Alberto Presta and Andrea Gasparin.
  This Header contains the implementation of iterator and Constiterator of our Tree class.
  Iterator and Constiterator are nested class of our Tree, and Moreover Constiterator is a derived class of iterator.
  
- there is also the implem
+
  
  */
  
@@ -33,11 +35,17 @@ protected:
     const K oper;
     const null_object<T> static null;
 public:
-    iterator(Node* p, const  Tree<T,W,K>& t=null):
+    /*
+     iterator has got two different constructors:
+     -the first one accepts only a node* and sets the default operation
+     -the second  one is for iterator of tree that has different relation of order: it accepts a node* and a const tree
+     
+     */
+    iterator(Node* p, const  Tree<T,W,K>& t):
     current{p}, oper{t.oper} {}
     
-    iterator(Node* p):
-    current{p}, oper{null} {}
+   iterator(Node* p):
+   current{p}, oper{null} {}
     
     // these are the operation which we use to compare different keys; obviously they depend on oper
     bool less(const T& a,const  T&b) const  {return oper(a,b);}
@@ -90,10 +98,10 @@ public:
      specular to the operator--
      */
     iterator& operator--(){
-        if(current->left!=nullptr){ //cerca se può scendere a destra
+        if(current->left!=nullptr){ //it tries to go down to the right
             current=current->left;
             if(current->right!=nullptr){
-                while(current->right!=nullptr){  //da qui scende a sinistra fin tanto possibile
+                while(current->right!=nullptr){  //from here it goes down to the left as possible
                     current=current->right;}
             }
             return *this;
@@ -101,14 +109,14 @@ public:
         
         else {
             if(current->parent==nullptr) {current=nullptr; return *this;}
-            if(greater(current->key  ,  current->parent->key)) { //se può risale a destra
+            if(greater(current->key  ,  current->parent->key)) { // If it is possible it goes up to the right
                 current=current->parent;
                 return *this;}
             
             else {
-                while(less(current->key  , current->parent->key)) { //in alternativa risale a sinistra
+                while(less(current->key  , current->parent->key)) { //ptherwise it goes up to the left as it is possible
                     current=current->parent;};
-                current=current->parent;  //infine sale a destra
+                current=current->parent;  //at the end it goes up to the right
                 return *this;
             };
             
@@ -126,7 +134,7 @@ public:
      */
     W& operator!() const{return current->value;}  //ritorno del valore
     /*
-     boolean operator
+     boolean operator for compare different iterators
      
      */
     bool operator==(const iterator& b) const {return current==b.current;}
