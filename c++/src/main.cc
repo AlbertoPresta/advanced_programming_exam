@@ -156,7 +156,11 @@ int main(){
         G.Fast_Balance();
         cout<<G<<endl;
         
-        
+        /*
+         this part use const [] const 
+         */
+        const Tree<int,int,oper<int>> pp{G};
+        cout<<pp[2]<<endl;;
     return 0;
          
     }

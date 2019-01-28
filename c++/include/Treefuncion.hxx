@@ -316,14 +316,17 @@ W& Tree<T,W,K>::operator[]  (const T& k)  {
 
 /*
  
- this method is useful if we deal with costant tree because they don't touch the tree
+ this method is useful if we deal with costant tree because they don't touch the tree.
+ if the method doesn't find the key, it throws an exception!
  */
 template<typename T,typename W,typename K>
 const  W& Tree<T,W,K>::operator[] (const T& k) const  {
     Node* p = find(k).node();
     Constiterator m{p,*this};
     
-    if(m==cend()){throw;};
+    if(m==cend()){
+        cout<<"key not found, so I throw an exception!"<<endl;
+        throw;};
     
     return !m;
     }
