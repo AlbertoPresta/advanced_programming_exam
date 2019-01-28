@@ -152,8 +152,8 @@ int main(){
          last thing that we test is the second method of balance
          */
         cout<<"*****************************************FAST_BALANCE***************"<<endl;
-        cout<<"G.Fast_Balance();"<<endl<<endl;
-        G.Fast_Balance();
+        cout<<"G.balance();"<<endl<<endl;
+        G.balance();
         cout<<G<<endl;
         
         /*

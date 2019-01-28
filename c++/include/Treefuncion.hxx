@@ -19,7 +19,6 @@
  ctr_insert
  linked-insert
  copy-move semantic
- rec_balance and balance
  clear and recursive_clear
  timer
   */
@@ -209,73 +208,15 @@ Tree<T,W,K>& Tree<T,W,K>::operator=(Tree<T,W,K>&& t) {
 }
 
 
-//--------------------BALANCE OF THE TREE-------------------------
-/*
- Probably it is the most interesting function of the project,because thanks to this we can pass from a totally unbalanced (and useless) tree to a balanced tree.
- -------------------------------------------------------balance()-------------------------------------------
- First of all we call the function balance.
- in the function balance we initialize an  empty tree which will be our future balanced tree (we will do a move assignment).
- Then we initialize an iterator i  which arrives to the median of the tree with the for loop.
- the we call rec_balance, which is the recursive_function which builds our tree
- 
- ---------------------------------------------------rec_balance(Tree<T,W,K>& b, iterator m, int lun)-----------------------------------------------------
- rec_balance is private and it receives in input following things:
- - the tree which will be the balanced tree.
- - an iterator m which points to the median node.
- - an integer which represents the size where to look for the following median.
- firts of all  rec_balance inserts the median node (given in input thanks to the iterator) in the tree b given in input
- If we have that b.size is equal to size_tree, it means that we have inserted all the nodes.
- Otherwise we initialize two different integers:
- - int_l represents the number of nodes from the first node to the median given in input
- - int_r represents the number of nodes from the median given in input to the last node.
- Then with two for loops we find the following medians (median of the sub-intervals) and then  we call rec_balance for the two
- with the new input
- 
- */
-
-template<typename T,typename W,typename K>
-void Tree<T,W,K>::rec_balance (Tree<T,W,K>& b, iterator m, int lun) noexcept {
-    
-    b.insert(*m,!m);
-    if(b.Size()==size_tree) return;
-    
-    int lun_l{lun/2};
-    int lun_r{lun-1-lun_l};
-    iterator i{m};
-    iterator j{m};
-    
-    if(lun_l>0) {
-        for(int ii{1};ii<=lun_l/2+lun_l%2;ii++) --i;   // we find the new median in the left sub interval respect the median given in input
-        rec_balance(b,i,lun_l);
-    };
-    if(lun_r>0) {
-        for(int jj{0};jj<=lun_r/2;jj++) ++j; // we find the new median in the right sub interval respect the median given in input.
-        rec_balance(b,j,lun_r);
-    };
-    return;
-}
 
 
-//balance
-template<typename T,typename W,typename K>
-void Tree<T,W,K>::balance() noexcept {
-    
-    Tree<T,W,K> b{this->oper};  //creation of the tree
-    iterator i{first,*this};
-    for(unsigned int ii{1};ii<size_tree/2+1;ii++) ++i;  // we arrive at the median of the tree
-    rec_balance(b,i,size_tree);  // call of the recursive function 
-    *this=std::move(b);}  // move semantic
-
-
-
-/*
- 
+ /*
  recursive_clear(Node*n): it is a recursive function used by clear() ant it wipes the contents of a single node.
  it receives in input a node * :
  if this node* has childred it calls recursive_clear for them.
  Then it deletes the node
- */
-
+ 
+*/
 template<typename T,typename W,typename K>
 void Tree<T,W,K>::recursive_clear (Node* n) noexcept{
     if(n->left!=nullptr) recursive_clear(n->left);
@@ -370,8 +311,8 @@ void timer(Tree<int,int,K>& A){
             
             // balance
             t2=clock();
-            if(size<=100000) A.balance();
-            else A.Fast_Balance();
+             A.balance();
+            
             t2=clock()-t2;
             cout<<"effettuato balance"<<endl;
             // time after balance

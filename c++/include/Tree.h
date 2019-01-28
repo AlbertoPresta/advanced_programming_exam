@@ -137,16 +137,13 @@ public:
      */
     ~Tree() {clear();};
     
-	/*
-     method balance --> it calls rec_balance
-     */
-	void balance() noexcept;
+	
 	
     void Linked_insert(int n);
     /*
      second method of balance--> it calls Rec_Balance, left_branch_deattaching ,right_branch_deattaching and Bal_reinsert
      */
-    void Fast_Balance() noexcept;
+    void balance() noexcept;
     
     
     W& operator[]  (const T& k) ;
@@ -157,13 +154,13 @@ public:
 private:
     void recursive_clear(Node* n) noexcept;
     
-    void rec_balance( Tree<T,W,K>& b, Tree<T,W,K>::iterator m, int lun) noexcept;
+    //void rec_balance( Tree<T,W,K>& b, Tree<T,W,K>::iterator m, int lun) noexcept;
 
     void ctr_insert( Node* n);
     
     void Bal_reinsert (Node* n,Node* r) noexcept;
-    void left_branch_deattaching (Node* a, Node* m) noexcept;
-    void right_branch_deattaching (Node* a, Node* m) noexcept;
+    void left_branch_detaching (Node* a, Node* m) noexcept;
+    void right_branch_detaching (Node* a, Node* m) noexcept;
     void Rec_Balance (Node* m, Node* r, int lun) noexcept;
 };
 
@@ -196,7 +193,7 @@ std::ostream& operator<<(std::ostream& os, const Tree<T,W,K>& l) {
 
 #include "iterator.hxx"
 #include "Treefuncion.hxx"
-#include "fast_balance.hxx"
+#include "balance.hxx"
 
 #endif
 

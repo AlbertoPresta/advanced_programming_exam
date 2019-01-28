@@ -15,7 +15,7 @@ struct oper{ bool operator()(const T& a, const T& b) const {return(a>b);}};
 int main(){
     try{
         //oper<int> o;
-	Tree<int,int> A{};
+	Tree<int,int> A;
 	cout<<"inizio del timing "<<endl;
     timer(A);
     cout<<"fine del timing"<<endl;
