@@ -30,9 +30,9 @@ import datetime  # use this module to deal with dates:  https://docs.python.org/
 from collections import OrderedDict
 
 class PostcardList:
-       """
-       class to read/write postcards frome external files provided by prof.Sartori
-       """
+    """
+    class to read/write postcards frome external files provided by prof.Sartori
+    """
     def __init__(self):
         # file name
         self._file = ""
